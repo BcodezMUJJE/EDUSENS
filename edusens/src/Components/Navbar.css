@@ -1,0 +1,335 @@
+:root {
+  /* Color scheme */
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-light: rgba(37, 99, 235, 0.1);
+  --text-white: #ffffff;
+  --text-white-muted: rgba(255, 255, 255, 0.85);
+  --bg-black: #000000;
+  --border-light: rgba(255, 255, 255, 0.1);
+  
+  /* Typography */
+  --font-sans: system-ui, -apple-system, sans-serif;
+  
+  /* Spacing */
+  --space-unit: 0.5rem; /* 8px base */
+  --border-radius: 0.375rem;
+}
+
+/* Base Styles (Mobile First - 320px and up) */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: calc(var(--space-unit) * 2) calc(var(--space-unit) * 3);
+  background-color: var(--bg-black);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  font-family: var(--font-sans);
+  position: relative;
+}
+
+.navbar-brand {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  color: var(--text-white);
+  z-index: 10;
+}
+
+.brand-name {
+  font-size: 1.25rem; /* 20px */
+  font-weight: 700;
+}
+
+.brand-region {
+  font-size: 0.625rem; /* 10px */
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-white-muted);
+  font-weight: 500;
+}
+
+.navbar-links {
+  display: none;
+  flex-direction: column;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: var(--bg-black);
+  padding: calc(var(--space-unit) * 2);
+  gap: calc(var(--space-unit) * 1);
+}
+
+.navbar-links.active {
+  display: flex;
+}
+
+.main-links {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--space-unit) * 1);
+}
+
+.nav-link {
+  text-decoration: none;
+  color: var(--text-white);
+  font-weight: 500;
+  padding: calc(var(--space-unit) * 1) 0;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: var(--primary);
+}
+
+.auth-link {
+  margin-top: calc(var(--space-unit) * 2);
+  padding-top: calc(var(--space-unit) * 2);
+  border-top: 1px solid var(--border-light);
+  font-weight: 600;
+}
+
+.menu-toggle {
+  display: block;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: calc(var(--space-unit) * 0.5);
+  color: var(--text-white);
+  z-index: 10;
+}
+
+/* ========== New Auth Button Styles ========== */
+.auth-container {
+  display: flex;
+  align-items: center;
+}
+
+.auth-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background-color: var(--primary);
+  color: white;
+  border-radius: var(--border-radius);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.auth-button:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.auth-button:active {
+  transform: translateY(0);
+}
+
+.auth-button-icon {
+  transition: transform 0.2s ease;
+}
+
+.auth-button:hover .auth-button-icon {
+  transform: translateX(2px);
+}
+
+/* Mobile specific styles */
+@media (max-width: 767px) {
+  .auth-button {
+    width: 100%;
+    justify-content: space-between;
+    margin-top: var(--space-unit);
+    padding: 0.75rem 1.5rem;
+  }
+  
+  .auth-container {
+    width: 100%;
+    margin-top: calc(var(--space-unit) * 1.5);
+    padding-top: calc(var(--space-unit) * 1.5);
+    border-top: 1px solid var(--border-light);
+  }
+}
+
+/* Desktop specific styles */
+@media (min-width: 768px) {
+  .auth-button {
+    padding: 0.5rem 1rem;
+    margin-left: calc(var(--space-unit) * 3);
+  }
+  
+  .auth-container::before {
+    content: '';
+    height: 1.5rem;
+    width: 1px;
+    background-color: var(--border-light);
+    margin-right: calc(var(--space-unit) * 3);
+  }
+}
+
+/* Larger screens adjustments */
+@media (min-width: 1024px) {
+  .auth-button {
+    padding: 0.625rem 1.25rem;
+  }
+}
+
+/* ========================================== */
+
+/* 375px - Larger Phones */
+@media (min-width: 375px) {
+  .brand-name {
+    font-size: 1.375rem; /* 22px */
+  }
+  .brand-region {
+    font-size: 0.6875rem; /* 11px */
+  }
+}
+
+/* 414px - Large Phones */
+@media (min-width: 414px) {
+  .navbar {
+    padding: calc(var(--space-unit) * 2.5) calc(var(--space-unit) * 4);
+  }
+}
+
+/* 768px - Tablet Portrait */
+@media (min-width: 768px) {
+  .navbar {
+    padding: calc(var(--space-unit) * 3) 5%;
+  }
+  
+  .brand-name {
+    font-size: 1.5rem; /* 24px */
+  }
+  
+  .brand-region {
+    font-size: 0.75rem; /* 12px */
+  }
+  
+  .navbar-links {
+    display: flex;
+    flex-direction: row;
+    position: static;
+    background: transparent;
+    padding: 0;
+    gap: 0;
+    align-items: center;
+  }
+  
+  .main-links {
+    flex-direction: row;
+    gap: calc(var(--space-unit) * 3);
+  }
+  
+  .nav-link {
+    padding: calc(var(--space-unit) * 0.5) 0;
+    position: relative;
+  }
+  
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--primary);
+    transition: width 0.3s ease;
+  }
+  
+  .nav-link:hover::after {
+    width: 100%;
+  }
+  
+  .auth-link {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+    margin-left: calc(var(--space-unit) * 4);
+    position: relative;
+  }
+  
+  .auth-link::before {
+    content: '';
+    position: absolute;
+    left: calc(var(--space-unit) * -2);
+    top: 50%;
+    transform: translateY(-50%);
+    height: 60%;
+    width: 1px;
+    background-color: var(--border-light);
+  }
+  
+  .menu-toggle {
+    display: none;
+  }
+}
+
+/* 1024px - Tablet Landscape */
+@media (min-width: 1024px) {
+  .navbar {
+    padding: calc(var(--space-unit) * 3.5) 7%;
+  }
+  
+  .main-links {
+    gap: calc(var(--space-unit) * 4);
+  }
+  
+  .auth-link {
+    margin-left: calc(var(--space-unit) * 5);
+  }
+  
+  .nav-link {
+    font-size: 1.0625rem; /* 17px */
+  }
+}
+
+/* 1366px - Laptop */
+@media (min-width: 1366px) {
+  .navbar {
+    padding: calc(var(--space-unit) * 4) 10%;
+  }
+  
+  .brand-name {
+    font-size: 1.625rem; /* 26px */
+  }
+  
+  .brand-region {
+    font-size: 0.8125rem; /* 13px */
+  }
+}
+
+/* 1920px - Desktop */
+@media (min-width: 1920px) {
+  .navbar {
+    padding: calc(var(--space-unit) * 4) 15%;
+    max-width: 1920px;
+    margin: 0 auto;
+  }
+  
+  .main-links {
+    gap: calc(var(--space-unit) * 5);
+  }
+  
+  .auth-link {
+    margin-left: calc(var(--space-unit) * 6);
+  }
+  
+  .brand-name {
+    font-size: 1.75rem; /* 28px */
+  }
+  
+  .brand-region {
+    font-size: 0.875rem; /* 14px */
+  }
+  
+  .nav-link {
+    font-size: 1.125rem; /* 18px */
+  }
+}
