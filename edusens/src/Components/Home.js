@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './Home.css';
 // eslint-disable-next-line
 import { FaRobot, FaChartLine, FaUserTie } from 'react-icons/fa';
@@ -23,7 +24,7 @@ function Home() {
 
       {/* Steps Section */}
       <section className="steps-section">
-        <h2>Don't just choose a career, EduPath helps you<br />choose your purpose in 3 simple steps !</h2>
+        <h2>Don't just choose a career, EduSens helps you<br />choose your purpose in 3 simple steps !</h2>
         <br /> <br /> <br />
         <div className="steps-container">
           <div className="step">
@@ -41,7 +42,7 @@ function Home() {
               <GiMagnifyingGlass className="icon" />
             </div>
             <h3>Indepth Career Insights</h3>
-            <p className="step-description">Get detailed information about salary ranges, growth potential, and required qualifications.</p>
+            <p className="step-description">Get detailed information about your career choice, what it entails, educational pathway, growth potential, salary etc.</p>
           </div>
           
           <div className="step">
@@ -50,11 +51,11 @@ function Home() {
               <FaUserTie className="icon" />
             </div>
             <h3>Real-world job shadowing</h3>
-            <p className="step-description">Experience a day in the life of professionals in your fields of interest.</p>
+            <p className="step-description">Experience three days at the workplace alongside a professional in your field of interest.</p>
           </div>
         </div>
         
-        <button className="cta-button">GET STARTED</button>
+        <Link to="/Our-Services"><button className="cta-button">GET STARTED</button></Link>
       </section>
     </div>
   );

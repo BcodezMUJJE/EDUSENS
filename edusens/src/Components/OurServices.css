@@ -1,341 +1,424 @@
-/* styles.css */
+/* Reset and Base Styles */
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    color: #333;
-    line-height: 1.6;
-    padding: 20px;
-    min-height: 100vh;
+  font-family: 'Roboto', sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f5f7fa;
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+/* EduSens Services Container */
+.edusens-services-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-header {
-    text-align: center;
-    margin-bottom: 40px;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+/* Hero Section */
+.services-hero {
+  background-color: #6b8e8e;
+  color: #fff;
+  padding: 60px 20px;
+  text-align: center;
+  border-radius: 8px;
+  margin-bottom: 40px;
 }
 
-h1 {
-    font-size: 2.8rem;
-    color: #2c3e50;
-    margin-bottom: 15px;
+.hero-content h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 
-.header-content {
-    max-width: 800px;
-    margin: 0 auto;
+.hero-subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+}
+
+.hero-description p {
+  font-size: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+  color: #e0e0e0;
+}
+
+/* Services Grid Section */
+.services-grid-section {
+  margin-bottom: 40px;
 }
 
 .services-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 25px;
-    margin-bottom: 40px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
 }
 
 .service-card {
-    background: white;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: #e8ecef;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.service-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+.card-image-container {
+  position: relative;
+  width: 100%;
+  height: 200px;
 }
 
 .service-img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.service-card:hover .card-overlay {
+  opacity: 1;
 }
 
 .service-content {
-    padding: 25px;
+  padding: 20px;
+  text-align: center;
 }
 
 .service-content h3 {
-    color: #2c3e50;
-    margin-bottom: 15px;
-    font-size: 1.5rem;
+  font-size: 1.4rem;
+  color: #2c3e50;
+  margin-bottom: 10px;
+  font-weight: 600;
 }
 
 .service-content p {
-    color: #7f8c8d;
-    margin-bottom: 20px;
+  color: #666;
+  font-size: 0.95rem;
+  margin-bottom: 15px;
 }
 
-.services-note {
-    text-align: center;
-    padding: 30px;
-    background: white;
-    border-radius: 15px;
-    margin-bottom: 40px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+.service-cta {
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.service-cta:hover {
+  background-color: #2980b9;
+}
+
+/* CTA Section */
+.services-cta {
+  background-color: #f8f9fa;
+  padding: 40px;
+  border-radius: 8px;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.cta-content h2 {
+  font-size: 2rem;
+  color: #2c3e50;
+  margin-bottom: 15px;
+}
+
+.cta-content p {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 10px;
 }
 
 .highlight {
-    font-weight: bold;
-    color: #2980b9;
-    font-size: 1.2rem;
-    margin-top: 15px;
-    display: block;
+  display: block;
+  font-weight: 600;
+  color: #e74c3c;
+  margin-bottom: 20px;
 }
 
-.services-tabs {
-    background: white;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-    margin-bottom: 40px;
+.get-started-btn {
+  background-color: #3498db;
+  color: #fff;
+  border: none;
+  padding: 12px 30px;
+  font-size: 1rem;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.tab-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    border-bottom: 2px solid #eee;
+.get-started-btn:hover {
+  background-color: #2980b9;
 }
 
-.tab-btn {
-    flex: 1;
-    min-width: 200px;
-    padding: 20px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #7f8c8d;
-    transition: all 0.3s ease;
-    outline: none;
+/* Additional Services Info */
+.additional-services {
+  margin-bottom: 40px;
 }
 
-.tab-btn:hover {
-    background: #f8f9fa;
-    color: #2c3e50;
+.service-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.tab-btn.active {
-    color: #2980b9;
-    border-bottom: 3px solid #2980b9;
+.service-info.reversed {
+  flex-direction: row-reverse;
 }
 
-.tab-content {
-    padding: 30px;
+.info-content {
+  flex: 1;
+  padding: 0 20px;
+  text-align: left;
 }
 
-.tab-panel {
-    display: none;
+.info-content h2 {
+  font-size: 1.8rem;
+  color: #2c3e50;
+  margin-bottom: 10px;
 }
 
-.tab-panel.active {
-    display: block;
-    animation: fadeIn 0.5s ease;
+.info-content p {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 15px;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+.info-content ul {
+  list-style-type: disc;
+  padding-left: 20px;
 }
 
-.tab-panel h2 {
-    color: #2c3e50;
-    margin-bottom: 20px;
-    font-size: 1.8rem;
+.info-content li {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 5px;
 }
 
-.tab-panel p {
-    margin-bottom: 15px;
-    color: #555;
-    font-size: 1.1rem;
+.info-image {
+  flex: 1;
 }
 
-.cta-button {
-    background: #2980b9;
-    color: white;
-    border: none;
-    padding: 15px 30px;
-    font-size: 1.1rem;
-    border-radius: 50px;
-    cursor: pointer;
-    margin-top: 20px;
-    transition: background 0.3s ease;
-    display: inline-block;
-    text-decoration: none;
-    box-shadow: 0 5px 15px rgba(41, 128, 185, 0.4);
+.info-image img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
 }
 
-.cta-button:hover {
-    background: #3498db;
+/* Hover and Focus States */
+@media (hover: hover) and (pointer: fine) {
+  .service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.service-card:focus-visible,
+.service-cta:focus-visible,
+.get-started-btn:focus-visible {
+  outline: 2px solid #3498db;
+  outline-offset: 2px;
+}
+
+/* Touch Feedback */
+@media (hover: none) and (pointer: coarse) {
+  .service-card:active {
     transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .service-cta:active,
+  .get-started-btn:active {
+    background-color: #2980b9;
+  }
 }
 
-footer {
-    text-align: center;
-    padding: 20px;
-    color: #7f8c8d;
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.service-card {
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+.service-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.service-card:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* Responsive Breakpoints */
+
+/* Small Phones (320–480px) */
+@media (max-width: 480px) {
+  .services-hero {
+    padding: 40px 15px;
+  }
+
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .services-grid {
+    gap: 15px;
+  }
+
+  .service-content h3 {
+    font-size: 1.2rem;
+  }
+
+  .service-content p {
+    font-size: 0.85rem;
+  }
+
+  .service-cta {
+    padding: 6px 15px;
     font-size: 0.9rem;
+  }
+
+  .services-cta {
+    padding: 30px;
+  }
+
+  .cta-content h2 {
+    font-size: 1.8rem;
+  }
+
+  .get-started-btn {
+    padding: 10px 25px;
+    font-size: 0.95rem;
+  }
+
+  .service-info {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .info-image img {
+    margin-top: 20px;
+  }
 }
 
-/* 320px - Mobile Small */
-@media (max-width: 320px) {
-    body {
-        padding: 10px;
-    }
-    
-    .container {
-        padding: 10px;
-    }
-    
-    h1 {
-        font-size: 1.6rem;
-    }
-    
-    .services-grid {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-    
-    .service-content {
-        padding: 15px;
-    }
-    
-    .tab-content {
-        padding: 15px;
-    }
-    
-    .tab-panel h2 {
-        font-size: 1.4rem;
-    }
-    
-    .tab-btn {
-        min-width: 100%;
-        padding: 12px;
-        font-size: 0.9rem;
-    }
-    
-    .cta-button {
-        width: 100%;
-        text-align: center;
-        padding: 12px;
-        font-size: 1rem;
-    }
+/* Large Phones (481–767px) */
+@media (min-width: 481px) and (max-width: 767px) {
+  .services-grid {
+    gap: 20px;
+  }
+
+  .hero-content h1 {
+    font-size: 2.2rem;
+  }
+
+  .service-content h3 {
+    font-size: 1.3rem;
+  }
+
+  .get-started-btn {
+    padding: 11px 28px;
+  }
 }
 
-/* 375px - Mobile */
-@media (min-width: 321px) and (max-width: 375px) {
-    h1 {
-        font-size: 1.7rem;
-    }
-    
-    .service-content h3 {
-        font-size: 1.3rem;
-    }
-    
-    .tab-btn {
-        min-width: 100%;
-    }
+/* Tablets (768–991px) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .services-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+  }
+
+  .hero-content h1 {
+    font-size: 2.4rem;
+  }
+
+  .service-info {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .info-image img {
+    margin-top: 20px;
+  }
 }
 
-/* 414px - Large Mobile */
-@media (min-width: 376px) and (max-width: 414px) {
-    h1 {
-        font-size: 1.8rem;
-    }
-    
-    .tab-btn {
-        min-width: 100%;
-    }
+/* Small Laptops (992–1199px) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .services-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 25px;
+  }
+
+  .services-container {
+    padding: 30px;
+  }
+
+  .service-info {
+    flex-direction: row;
+  }
 }
 
-/* 768px - Tablet */
-@media (min-width: 415px) and (max-width: 768px) {
-    h1 {
-        font-size: 2.2rem;
-    }
-    
-    .tab-btn {
-        min-width: 150px;
-        padding: 15px;
-        font-size: 1rem;
-    }
-    
-    .tab-content {
-        padding: 20px;
-    }
-    
-    .services-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
+/* Desktops (1200–1399px) */
+@media (min-width: 1200px) and (max-width: 1399px) {
+  .services-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 30px;
+  }
 }
 
-/* 1024px - Small Laptop */
-@media (min-width: 769px) and (max-width: 1024px) {
-    .container {
-        max-width: 900px;
-    }
-    
-    .services-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
+/* Large Desktops (≥1400px) */
+@media (min-width: 1400px) {
+  .services-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 35px;
+  }
 
-/* 1366px - Laptop */
-@media (min-width: 1025px) and (max-width: 1366px) {
-    .container {
-        max-width: 1100px;
-    }
-}
+  .services-container {
+    padding: 40px;
+  }
 
-/* 1440px - Desktop */
-@media (min-width: 1367px) and (max-width: 1440px) {
-    .container {
-        max-width: 1200px;
-    }
-}
+  .hero-content h1 {
+    font-size: 2.8rem;
+  }
 
-/* 1920px - Large Desktop */
-@media (min-width: 1441px) {
-    .container {
-        max-width: 1600px;
-    }
-    
-    h1 {
-        font-size: 3.5rem;
-    }
-    
-    .service-content h3 {
-        font-size: 1.8rem;
-    }
-    
-    .service-content p, .tab-panel p {
-        font-size: 1.2rem;
-    }
-    
-    .tab-btn {
-        padding: 25px;
-        font-size: 1.3rem;
-    }
-    
-    .cta-button {
-        padding: 20px 40px;
-        font-size: 1.3rem;
-    }
+  .service-content h3 {
+    font-size: 1.5rem;
+  }
+
+  .info-content h2 {
+    font-size: 2rem;
+  }
 }

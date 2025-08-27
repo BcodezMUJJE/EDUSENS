@@ -1,3 +1,4 @@
+/* Navbar.css */
 :root {
   /* Color scheme */
   --primary: #2563eb;
@@ -25,28 +26,26 @@
   background-color: var(--bg-black);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   font-family: var(--font-sans);
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 9999;
+  box-sizing: border-box;
+  min-height: 80px; /* Increased minimum height for larger logo */
 }
 
 .navbar-brand {
   display: flex;
-  flex-direction: column;
-  line-height: 1.2;
-  color: var(--text-white);
-  z-index: 10;
+  align-items: center;
+  z-index: 10001;
 }
 
-.brand-name {
-  font-size: 1.25rem; /* 20px */
-  font-weight: 700;
-}
-
-.brand-region {
-  font-size: 0.625rem; /* 10px */
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--text-white-muted);
-  font-weight: 500;
+.navbar-logo {
+  height: 150px; /* Increased from 40px */
+  width: auto;
+  object-fit: contain;
 }
 
 .navbar-links {
@@ -59,6 +58,8 @@
   background-color: var(--bg-black);
   padding: calc(var(--space-unit) * 2);
   gap: calc(var(--space-unit) * 1);
+  z-index: 10000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-links.active {
@@ -77,6 +78,9 @@
   font-weight: 500;
   padding: calc(var(--space-unit) * 1) 0;
   transition: color 0.2s ease;
+  position: relative;
+  z-index: 10001;
+  font-size: 1.1rem; /* Slightly larger font */
 }
 
 .nav-link:hover {
@@ -97,13 +101,16 @@
   cursor: pointer;
   padding: calc(var(--space-unit) * 0.5);
   color: var(--text-white);
-  z-index: 10;
+  z-index: 10002;
+  position: relative;
 }
 
 /* ========== New Auth Button Styles ========== */
 .auth-container {
   display: flex;
   align-items: center;
+  position: relative;
+  z-index: 10001;
 }
 
 .auth-button {
@@ -111,7 +118,7 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.625rem 1.25rem;
+  padding: 0.75rem 1.5rem; /* Increased padding for larger button */
   background-color: var(--primary);
   color: white;
   border-radius: var(--border-radius);
@@ -119,6 +126,9 @@
   font-weight: 600;
   transition: all 0.2s ease;
   border: 1px solid transparent;
+  position: relative;
+  z-index: 10001;
+  font-size: 1.05rem; /* Slightly larger font */
 }
 
 .auth-button:hover {
@@ -133,6 +143,8 @@
 
 .auth-button-icon {
   transition: transform 0.2s ease;
+  width: 18px; /* Slightly larger icon */
+  height: 18px;
 }
 
 .auth-button:hover .auth-button-icon {
@@ -145,7 +157,7 @@
     width: 100%;
     justify-content: space-between;
     margin-top: var(--space-unit);
-    padding: 0.75rem 1.5rem;
+    padding: 0.85rem 1.75rem; /* Increased padding */
   }
   
   .auth-container {
@@ -154,28 +166,66 @@
     padding-top: calc(var(--space-unit) * 1.5);
     border-top: 1px solid var(--border-light);
   }
+  
+  /* Add padding to body when navbar is fixed */
+  body {
+    padding-top: 85px; /* Increased from 70px */
+  }
+  
+  .navbar-logo {
+    height: 45px; /* Increased from 35px */
+  }
+  
+  .navbar {
+    min-height: 75px; /* Slightly smaller on mobile but still larger than before */
+  }
 }
 
 /* Desktop specific styles */
 @media (min-width: 768px) {
   .auth-button {
-    padding: 0.5rem 1rem;
+    padding: 0.65rem 1.25rem; /* Increased padding */
     margin-left: calc(var(--space-unit) * 3);
   }
   
   .auth-container::before {
     content: '';
-    height: 1.5rem;
+    height: 1.75rem; /* Increased height */
     width: 1px;
     background-color: var(--border-light);
     margin-right: calc(var(--space-unit) * 3);
+  }
+  
+  /* Add padding to body when navbar is fixed */
+  body {
+    padding-top: 95px; /* Increased from 80px */
+  }
+  
+  .navbar-logo {
+    height: 60px; /* Increased from 45px */
+  }
+  
+  .navbar {
+    min-height: 90px; /* Increased navbar height */
   }
 }
 
 /* Larger screens adjustments */
 @media (min-width: 1024px) {
   .auth-button {
-    padding: 0.625rem 1.25rem;
+    padding: 0.75rem 1.5rem; /* Increased padding */
+  }
+  
+  body {
+    padding-top: 100px; /* Increased from 85px */
+  }
+  
+  .navbar-logo {
+    height: 65px; /* Increased from 50px */
+  }
+  
+  .navbar {
+    min-height: 95px; /* Increased navbar height */
   }
 }
 
@@ -183,11 +233,8 @@
 
 /* 375px - Larger Phones */
 @media (min-width: 375px) {
-  .brand-name {
-    font-size: 1.375rem; /* 22px */
-  }
-  .brand-region {
-    font-size: 0.6875rem; /* 11px */
+  .navbar-logo {
+    height: 48px; /* Increased from 38px */
   }
 }
 
@@ -204,14 +251,6 @@
     padding: calc(var(--space-unit) * 3) 5%;
   }
   
-  .brand-name {
-    font-size: 1.5rem; /* 24px */
-  }
-  
-  .brand-region {
-    font-size: 0.75rem; /* 12px */
-  }
-  
   .navbar-links {
     display: flex;
     flex-direction: row;
@@ -220,6 +259,7 @@
     padding: 0;
     gap: 0;
     align-items: center;
+    box-shadow: none;
   }
   
   .main-links {
@@ -286,7 +326,7 @@
   }
   
   .nav-link {
-    font-size: 1.0625rem; /* 17px */
+    font-size: 1.125rem; /* Increased from 1.0625rem */
   }
 }
 
@@ -296,12 +336,16 @@
     padding: calc(var(--space-unit) * 4) 10%;
   }
   
-  .brand-name {
-    font-size: 1.625rem; /* 26px */
+  body {
+    padding-top: 105px; /* Increased from 90px */
   }
   
-  .brand-region {
-    font-size: 0.8125rem; /* 13px */
+  .navbar-logo {
+    height: 70px; /* Increased from 55px */
+  }
+  
+  .navbar {
+    min-height: 105px; /* Increased navbar height */
   }
 }
 
@@ -311,6 +355,8 @@
     padding: calc(var(--space-unit) * 4) 15%;
     max-width: 1920px;
     margin: 0 auto;
+    left: 50%;
+    transform: translateX(-50%);
   }
   
   .main-links {
@@ -321,15 +367,65 @@
     margin-left: calc(var(--space-unit) * 6);
   }
   
-  .brand-name {
-    font-size: 1.75rem; /* 28px */
-  }
-  
-  .brand-region {
-    font-size: 0.875rem; /* 14px */
-  }
-  
   .nav-link {
-    font-size: 1.125rem; /* 18px */
+    font-size: 1.2rem; /* Increased from 1.125rem */
   }
+  
+  body {
+    padding-top: 115px; /* Increased from 95px */
+  }
+  
+  .navbar-logo {
+    height: 75px; /* Increased from 55px */
+  }
+  
+  .navbar {
+    min-height: 115px; /* Increased navbar height */
+  }
+  
+  .auth-button {
+    padding: 0.85rem 1.75rem; /* Increased padding */
+    font-size: 1.1rem; /* Slightly larger font */
+  }
+}
+
+/* Additional utility classes for preventing navbar overlap */
+.navbar-spacer {
+  height: var(--navbar-height, 90px); /* Increased from 80px */
+  width: 100%;
+}
+
+/* Focus styles for accessibility */
+.nav-link:focus,
+.auth-button:focus,
+.menu-toggle:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Smooth scrolling for anchor links */
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: var(--navbar-height, 90px); /* Increased from 80px */
+}
+
+/* Prevent body scroll when mobile menu is open */
+body.menu-open {
+  overflow: hidden;
+}
+
+/* Animation for mobile menu */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.navbar-links.active {
+  animation: slideDown 0.3s ease-out;
 }

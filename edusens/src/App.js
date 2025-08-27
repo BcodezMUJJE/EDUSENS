@@ -4,6 +4,9 @@ import Navbar from './Components/Navbar';
 import Home from './Components/Home';
 import Footer from './Components/Footer';
 import OurServices from './Components/OurServices';
+import AICareerQuiz from './Components/AICareerQuiz';
+import CareerExplorer from './Components/CareerExplorer';
+import JobShadowing from './Components/JobShadowing';
 
 function App() {
   return (
@@ -13,6 +16,9 @@ function App() {
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/Our-Services' element={<OurServices />} />
+          <Route path='/Ai-Careers' element={<AICareerQuiz />} />
+	        <Route path='/Edusens-Careers' element={<CareerExplorer />} />
+          <Route path='/job-shadowing' element={<JobShadowing />} />
         </Routes>
         <Footer />
       </div>

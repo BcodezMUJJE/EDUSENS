@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Navbar.css';
+import Logo from '../Assets/Logoo.png'
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -7,8 +8,11 @@ const Navbar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-brand">
-        <span className="brand-name">EduSens</span>
-        <span className="brand-region">AFRICA</span>
+        <img 
+          src={Logo} 
+          alt="EduSens Africa" 
+          className="navbar-logo"
+        />
       </div>
       
       {/* Mobile menu toggle */}
