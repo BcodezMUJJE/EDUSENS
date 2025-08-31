@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './Home.css';
 // eslint-disable-next-line
@@ -51,7 +51,7 @@ const VideoPlayer = () => {
         </div>
         
         <div className="video-caption">
-          <p>EduSens Africa - Guiding students to their perfect career since 2023</p>
+          <p>EduSens Africa - Guiding students to their perfect career.</p>
         </div>
       </div>
     </section>
@@ -59,6 +59,22 @@ const VideoPlayer = () => {
 };
 
 function Home() {
+  // Example backend call (non-disruptive)
+  useEffect(() => {
+    let mounted = true;
+    import('../apiClient').then(({ getTest }) => {
+      getTest().then(data => {
+        if (mounted) {
+          // eslint-disable-next-line no-console
+          console.log('Backend test endpoint response:', data);
+        }
+      }).catch(err => {
+        // eslint-disable-next-line no-console
+        console.warn('Backend test endpoint failed:', err.message);
+      });
+    });
+    return () => { mounted = false; };
+  }, []);
   return (
     <div className="home-container">
       {/* Hero Section */}
