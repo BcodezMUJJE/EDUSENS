@@ -7,6 +7,7 @@ import OurServices from './Components/OurServices';
 import AICareerQuiz from './Components/AICareerQuiz';
 import CareerExplorer from './Components/CareerExplorer';
 import JobShadowing from './Components/JobShadowing';
+import ContactUsPage from './Components/ContactUsPage';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path='/Ai-Careers' element={<AICareerQuiz />} />
 	        <Route path='/Edusens-Careers' element={<CareerExplorer />} />
           <Route path='/job-shadowing' element={<JobShadowing />} />
+          <Route path='/contact-us' element={<ContactUsPage />} />
         </Routes>
         <Footer />
       </div>

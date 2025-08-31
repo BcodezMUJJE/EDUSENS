@@ -1,459 +1,456 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 
-/**
- * =============================
- * EduSens Africa Contact Page
- * Single-file React implementation
- * =============================
- * Features:
- *  - Google Meet link creation via Google Calendar API (requires OAuth access token)
- *  - Sendbird in-app messaging (requires @sendbird/uikit-react dependency & App ID)
- *  - Floating AI chatbot (calls your backend AI endpoint)
- *  - Email form (posts to your contact endpoint)
- *
- * External Dependencies (install):
- *   npm i @sendbird/uikit-react @sendbird/chat
- *
- * Environment Variables (example):
- *   REACT_APP_SENDBIRD_APP_ID=YOUR_SENDBIRD_APP_ID
- *   REACT_APP_CONTACT_ENDPOINT=/api/contact
- *   REACT_APP_AI_CHAT_ENDPOINT=/api/ai-chat
- *
- * Google OAuth:
- *   - Acquire an OAuth 2.0 access token with scope:
- *       https://www.googleapis.com/auth/calendar.events
- *   - Store it (e.g., window.googleAccessToken or context) before this page is used.
- *
- * SECURITY NOTE:
- *   Never expose secrets (API keys) directly in front-end if avoidable; proxy through backend.
- */
-
-// ---- Constants / Helpers ----
-const CALENDAR_ENDPOINT = 'https://www.googleapis.com/calendar/v3/calendars/primary/events';
-
-// Basic email validator
-const isEmail = (val) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val);
-
-// ---- Google Meet Hook (inline) ----
-function useCreateMeetLink() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const createMeetLink = async ({ summary, description, durationMinutes = 30 }) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const token = window?.googleAccessToken;
-      if (!token) throw new Error('Google access token not found. Authenticate first.');
-
-      const start = new Date();
-      const end = new Date(start.getTime() + durationMinutes * 60000);
-
-      const body = {
-        summary,
-        description,
-        start: { dateTime: start.toISOString() },
-        end: { dateTime: end.toISOString() },
-        conferenceData: {
-          createRequest: {
-            requestId: 'edusens-' + Date.now(),
-            conferenceSolutionKey: { type: 'hangoutsMeet' }
-          }
-        }
-      };
-
-      const res = await fetch(`${CALENDAR_ENDPOINT}?conferenceDataVersion=1`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(body)
-      });
-      if (!res.ok) {
-        const txt = await res.text();
-        throw new Error(`Calendar API error: ${txt}`);
-      }
-      const json = await res.json();
-      const meetLink = json?.hangoutLink || json?.conferenceData?.entryPoints?.[0]?.uri;
-      if (!meetLink) throw new Error('No Meet link returned');
-      return meetLink;
-    } catch (e) {
-      setError(e.message);
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return { createMeetLink, loading, error };
-}
-
-// ---- AI Chat Service (inline) ----
-async function sendAIMessage(messages) {
-  const endpoint = process.env.REACT_APP_AI_CHAT_ENDPOINT || '/api/ai-chat';
-  const res = await fetch(endpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages })
-  });
-  if (!res.ok) throw new Error('AI service error');
-  const data = await res.json();
-  return data.reply || 'No response available.';
-}
-
-// ---- Email Service (inline) ----
-async function sendEmail({ name, email, subject, message }) {
-  const endpoint = process.env.REACT_APP_CONTACT_ENDPOINT || '/api/contact';
-  const res = await fetch(endpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, email, subject, message })
-  });
-  if (!res.ok) {
-    const data = await res.json().catch(() => ({}));
-    throw new Error(data.error || 'Failed to send email');
-  }
-  return res.json();
-}
-
-// ---- Sendbird Minimal Setup (inline) ----
-import SendbirdChat from '@sendbird/chat';
-import { GroupChannelModule } from '@sendbird/chat/groupChannel';
-import { SendBirdProvider, ChannelList, Channel } from '@sendbird/uikit-react';
-import '@sendbird/uikit-react/dist/index.css';
-
-let sbInstance = null;
-async function initSendbirdUser(userId, nickname) {
-  if (sbInstance) return sbInstance;
-  sbInstance = await SendbirdChat.init({
-    appId: process.env.REACT_APP_SENDBIRD_APP_ID,
-    modules: [GroupChannelModule]
-  });
-  await sbInstance.connect(userId);
-  if (nickname) {
-    await sbInstance.updateCurrentUserInfo({ nickname });
-  }
-  ensureSupportChannel(sbInstance);
-  return sbInstance;
-}
-async function ensureSupportChannel(sb) {
-  try {
-    const query = sb.groupChannel.createMyGroupChannelListQuery({});
-    const channels = await query.next();
-    const existing = channels.find(c => c.name === 'EduSens Support');
-    if (!existing) {
-      await sb.groupChannel.createChannel({
-        name: 'EduSens Support',
-        invitedUserIds: [], // Add admin IDs if needed
-        isDistinct: false
-      });
-    }
-  } catch (e) {
-    console.warn('Support channel setup issue', e);
-  }
-}
-
-// ---- Subcomponents (within single file) ----
-
-// Google Meet Section
-function GoogleMeetSection() {
-  const { loading, error, createMeetLink } = useCreateMeetLink();
-  const [meetLink, setMeetLink] = useState('');
-  const [showRaw, setShowRaw] = useState(false);
-
-  const handleCreate = async () => {
-    const link = await createMeetLink({
-      summary: 'EduSens Africa Support Call',
-      description: 'Support session via Contact Page',
-      durationMinutes: 30
-    });
-    if (link) setMeetLink(link);
-  };
-
-  return (
-    <div className="contact-card span-2">
-      <h2>Live Video Support</h2>
-      <p className="section-desc">Create a Google Meet link to connect with our support team.</p>
-
-      {!meetLink && (
-        <button className="btn primary" disabled={loading} onClick={handleCreate}>
-          {loading ? 'Generating…' : 'Create Google Meet'}
-        </button>
-      )}
-
-      {error && <div className="alert error">{error}</div>}
-
-      {meetLink && (
-        <div className="meet-link-box">
-          <p className="small-label">Meet Link:</p>
-          <div className="meet-link-row">
-            <a href={meetLink} target="_blank" rel="noopener noreferrer" className="meet-anchor">
-              {meetLink}
-            </a>
-            <button
-              className="btn subtle"
-              onClick={() => navigator.clipboard.writeText(meetLink)}
-            >
-              Copy
-            </button>
-          </div>
-          <div className="meet-actions">
-            <button className="btn secondary" onClick={() => setMeetLink('')}>New Link</button>
-            <button className="btn ghost" onClick={() => setShowRaw(s => !s)}>
-              {showRaw ? 'Hide Info' : 'Embed Notes'}
-            </button>
-          </div>
-          {showRaw && (
-            <p className="embed-note">
-              Google Meet embedding is limited; standard practice is opening the link in a new tab.
-            </p>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// Messaging Section
-function MessagingSection() {
-  const [user, setUser] = useState(null);
-  const [ready, setReady] = useState(false);
-  const [activeChannelUrl, setActiveChannelUrl] = useState('');
-
-  useEffect(() => {
-    setUser({
-      userId: 'demo-' + Math.floor(Math.random() * 10000),
-      nickname: 'Guest User'
-    });
-  }, []);
-
-  useEffect(() => {
-    if (user) {
-      initSendbirdUser(user.userId, user.nickname)
-        .then(() => setReady(true))
-        .catch(e => console.error(e));
-    }
-  }, [user]);
-
-  return (
-    <div className="contact-card">
-      <h2>In-App Messaging</h2>
-      <p className="section-desc">Chat live with EduSens Africa support or community admins.</p>
-      {!user && <p>Loading user...</p>}
-      {user && !ready && <p>Initializing chat…</p>}
-      {user && ready && (
-        <div className="sb-wrapper">
-          <SendBirdProvider
-            appId={process.env.REACT_APP_SENDBIRD_APP_ID}
-            userId={user.userId}
-            nickname={user.nickname}
-          >
-            <div className="sb-layout">
-              <aside className="sb-channel-list">
-                <ChannelList
-                  onChannelSelect={(channel) => setActiveChannelUrl(channel?.url)}
-                  renderChannelPreview={({ channel }) => {
-                    const active = activeChannelUrl === channel.url;
-                    return (
-                      <div
-                        className={`sb-channel-preview ${active ? 'active' : ''}`}
-                        onClick={() => setActiveChannelUrl(channel.url)}
-                      >
-                        <span>{channel.name || 'Channel'}</span>
-                      </div>
-                    );
-                  }}
-                />
-              </aside>
-              <section className="sb-channel-window">
-                {activeChannelUrl ? (
-                  <Channel channelUrl={activeChannelUrl} />
-                ) : (
-                  <div className="placeholder">
-                    <p>Select a channel to start messaging.</p>
-                  </div>
-                )}
-              </section>
-            </div>
-          </SendBirdProvider>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// Email Form Section
-function EmailFormSection() {
-  const initialForm = { name: '', email: '', subject: '', message: '' };
-  const [form, setForm] = useState(initialForm);
-  const [status, setStatus] = useState({ state: 'idle', error: null });
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm(f => ({ ...f, [name]: value }));
-  };
-
-  const validate = () => {
-    if (!form.name.trim()) return 'Name is required';
-    if (!isEmail(form.email)) return 'Valid email required';
-    if (!form.subject.trim()) return 'Subject is required';
-    if (form.message.trim().length < 10) return 'Message must be at least 10 characters';
-    return null;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const err = validate();
-    if (err) {
-      setStatus({ state: 'error', error: err });
-      return;
-    }
-    setStatus({ state: 'sending', error: null });
-    try {
-      await sendEmail(form);
-      setStatus({ state: 'sent', error: null });
-      setForm(initialForm);
-    } catch (error) {
-      setStatus({ state: 'error', error: error.message || 'Send failed' });
-    }
-  };
-
-  return (
-    <div className="contact-card">
-      <h2>Email Our Team</h2>
-      <p className="section-desc">Got a question or partnership idea? Write to us.</p>
-      <form className="email-form" onSubmit={handleSubmit} noValidate>
-        <div className="form-field">
-          <label>Name<span className="req">*</span></label>
-          <input name="name" value={form.name} onChange={handleChange} required />
-        </div>
-        <div className="form-field">
-          <label>Email<span className="req">*</span></label>
-          <input type="email" name="email" value={form.email} onChange={handleChange} required />
-        </div>
-        <div className="form-field">
-          <label>Subject<span className="req">*</span></label>
-          <input name="subject" value={form.subject} onChange={handleChange} required />
-        </div>
-        <div className="form-field">
-          <label>Message<span className="req">*</span></label>
-          <textarea
-            name="message"
-            rows={5}
-            value={form.message}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="actions-row">
-          <button className="btn primary" type="submit" disabled={status.state === 'sending'}>
-            {status.state === 'sending' ? 'Sending...' : 'Send Message'}
-          </button>
-          {status.state === 'sent' && <span className="status success">Sent!</span>}
-          {status.state === 'error' && <span className="status error">{status.error}</span>}
-        </div>
-      </form>
-    </div>
-  );
-}
-
-// Floating AI Chatbot
-function FloatingChatbot() {
-  const [open, setOpen] = useState(false);
+const ContactUsPage = () => {
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'Hi! I am EduSens AI. How can I help you today?' }
+    { text: 'Hello 👋, I’m EduBot. I can tell you a bit about EduSens Africa and help guide you on career learning courses for children.', sender: 'bot' }
   ]);
-  const [input, setInput] = useState('');
-  const [loading, setLoading] = useState(false);
-  const endRef = useRef(null);
+  const [inputMessage, setInputMessage] = useState('');
 
-  useEffect(() => {
-    if (open && endRef.current) {
-      endRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [messages, open]);
-
-  const handleSend = async (e) => {
+  const handleSendMessage = (e) => {
     e.preventDefault();
-    if (!input.trim()) return;
-    const userMsg = { role: 'user', content: input.trim() };
-    setMessages(prev => [...prev, userMsg]);
-    setInput('');
-    setLoading(true);
-    try {
-      const reply = await sendAIMessage([...messages, userMsg]);
-      setMessages(prev => [...prev, { role: 'assistant', content: reply }]);
-    } catch (err) {
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Error: please try again.' }]);
-    } finally {
-      setLoading(false);
-    }
+    if (inputMessage.trim() === '') return;
+    
+    // Add user message
+    setMessages([...messages, { text: inputMessage, sender: 'user' }]);
+    setInputMessage('');
+    
+    // Simulate bot response after a short delay
+    setTimeout(() => {
+      setMessages(prev => [...prev, { text: "I'm a demo chatbot. In a real implementation, I would provide helpful responses about EduSens Africa and educational courses.", sender: 'bot' }]);
+    }, 1000);
+  };
+
+  const handleEmailClick = () => {
+    window.location.href = 'mailto:info@edusensafrica.com';
+  };
+
+  const handlePhoneClick = () => {
+    window.location.href = 'tel:+254790966319';
+  };
+
+  const handleMeetClick = () => {
+    // In a real implementation, this would open Google Meet within the app
+    window.open('https://meet.google.com/', '_self');
   };
 
   return (
-    <>
-      <button
-        aria-label="Toggle AI Chatbot"
-        className={`chatbot-fab ${open ? 'open' : ''}`}
-        onClick={() => setOpen(o => !o)}
-      >
-        {open ? '×' : 'AI'}
-      </button>
-      {open && (
-        <div className="chatbot-panel" role="dialog">
-          <header className="chatbot-header">
-            <h3>EduSens AI</h3>
-            <button className="close-btn" aria-label="Close chatbot" onClick={() => setOpen(false)}>×</button>
-          </header>
-          <div className="chatbot-messages">
-            {messages.map((m, i) => (
-              <div key={i} className={`chat-msg ${m.role}`}>
-                <div className="bubble">{m.content}</div>
-              </div>
-            ))}
-            {loading && (
-              <div className="chat-msg assistant">
-                <div className="bubble typing">
-                  <span className="dot" /><span className="dot" /><span className="dot" />
+    <div className="contact-page">
+      <div className="container">
+        <header className="page-header">
+          <h1>Contact EduSens Africa</h1>
+          <p>Get in touch with us for inquiries, support, or partnership opportunities</p>
+        </header>
+
+        <div className="contact-grid">
+          <div className="contact-info-card">
+            <h2>Contact Information</h2>
+            <div className="contact-details">
+              <div className="contact-item" onClick={handleEmailClick}>
+                <div className="icon-wrapper">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M1.5 8.67v8.58a3 3 0 003 3h15a3 3 0 003-3V8.67l-8.928 5.493a3 3 0 01-3.144 0L1.5 8.67z" />
+                    <path d="M22.5 6.908V6.75a3 3 0 00-3-3h-15a3 3 0 00-3 3v.158l9.714 5.978a1.5 1.5 0 001.572 0L22.5 6.908z" />
+                  </svg>
+                </div>
+                <div className="contact-text">
+                  <p>Email</p>
+                  <p className="contact-value">info@edusensafrica.com</p>
                 </div>
               </div>
-            )}
-            <div ref={endRef} />
+
+              <div className="contact-item" onClick={handlePhoneClick}>
+                <div className="icon-wrapper">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path fillRule="evenodd" d="M1.5 4.5a3 3 0 013-3h1.372c.86 0 1.61.586 1.819 1.42l1.105 4.423a1.875 1.875 0 01-.694 1.955l-1.293.97c-.135.101-.164.249-.126.352a11.285 11.285 0 006.697 6.697c.103.038.25.009.352-.126l.97-1.293a1.875 1.875 0 011.955-.694l4.423 1.105c.834.209 1.42.959 1.42 1.82V19.5a3 3 0 01-3 3h-2.25C8.552 22.5 1.5 15.448 1.5 6.75V4.5z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="contact-text">
+                  <p>Phone</p>
+                  <p className="contact-value">+254790966319</p>
+                </div>
+              </div>
+            </div>
           </div>
-          <form className="chatbot-input-row" onSubmit={handleSend}>
-            <input
-              type="text"
-              value={input}
-              placeholder="Type your question..."
-              onChange={(e) => setInput(e.target.value)}
-            />
-            <button className="btn primary" disabled={loading || !input.trim()}>
-              Send
+
+          <div className="meet-card">
+            <h2>Instant Video Meeting</h2>
+            <p>Connect with our team via Google Meet for immediate assistance</p>
+            <button className="meet-button" onClick={handleMeetClick}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M4.5 4.5a3 3 0 00-3 3v9a3 3 0 003 3h8.25a3 3 0 003-3v-9a3 3 0 00-3-3H4.5zM19.94 18.75l-2.69-2.69V7.94l2.69-2.69c.944-.945 2.56-.276 2.56 1.06v11.38c0 1.336-1.616 2.005-2.56 1.06z" />
+              </svg>
+              Start Google Meet
             </button>
-          </form>
+          </div>
         </div>
-      )}
-    </>
+      </div>
+
+      {/* Chatbot Widget */}
+      <div className={`chatbot-widget ${isChatOpen ? 'open' : ''}`}>
+        <div className="chatbot-header" onClick={() => setIsChatOpen(!isChatOpen)}>
+          <div className="chatbot-title">
+            <div className="chatbot-avatar">E</div>
+            <div>
+              <h3>EduBot</h3>
+              <p>{isChatOpen ? 'Ask me anything' : 'Online'}</p>
+            </div>
+          </div>
+          <button className="chatbot-toggle">
+            {isChatOpen ? (
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+              </svg>
+            ) : (
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 2c-2.236 0-4.43.18-6.57.524C1.993 2.755 1 4.014 1 5.426v5.148c0 1.413.993 2.67 2.43 2.902.848.137 1.705.248 2.57.331v-3.703a2 2 0 01.586-1.414l2-2a2 2 0 012.828 0l2 2a2 2 0 01.586 1.414v3.703c.865-.083 1.722-.194 2.57-.331C18.007 13.245 19 11.986 19 10.574V5.426c0-1.413-.993-2.67-2.43-2.902A41.403 41.403 0 0010 2zm0 12a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+              </svg>
+            )}
+          </button>
+        </div>
+
+        {isChatOpen && (
+          <div className="chatbot-content">
+            <div className="chatbot-messages">
+              {messages.map((message, index) => (
+                <div key={index} className={`message ${message.sender}`}>
+                  {message.text}
+                </div>
+              ))}
+            </div>
+
+            <form className="chatbot-input" onSubmit={handleSendMessage}>
+              <input
+                type="text"
+                placeholder="Type your message here..."
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+              />
+              <button type="submit">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
+                </svg>
+              </button>
+            </form>
+          </div>
+        )}
+      </div>
+
+      <style jsx>{`
+        .contact-page {
+          min-height: 100vh;
+          background-color: #f8fafc;
+          padding: 2rem 1rem;
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        .container {
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+        
+        .page-header {
+          text-align: center;
+          margin-bottom: 3rem;
+        }
+        
+        .page-header h1 {
+          font-size: 2.5rem;
+          color: #1e293b;
+          margin-bottom: 0.5rem;
+          font-weight: 700;
+        }
+        
+        .page-header p {
+          font-size: 1.125rem;
+          color: #64748b;
+          max-width: 600px;
+          margin: 0 auto;
+        }
+        
+        .contact-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 2rem;
+        }
+        
+        @media (min-width: 768px) {
+          .contact-grid {
+            grid-template-columns: 1fr 1fr;
+          }
+        }
+        
+        .contact-info-card, .meet-card {
+          background: white;
+          border-radius: 1rem;
+          padding: 2rem;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+          transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .contact-info-card:hover, .meet-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .contact-info-card h2, .meet-card h2 {
+          font-size: 1.5rem;
+          color: #1e293b;
+          margin-bottom: 1rem;
+          font-weight: 600;
+        }
+        
+        .contact-info-card p, .meet-card p {
+          color: #64748b;
+          margin-bottom: 1.5rem;
+        }
+        
+        .contact-details {
+          display: flex;
+          flex-direction: column;
+          gap: 1.5rem;
+        }
+        
+        .contact-item {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          cursor: pointer;
+          padding: 0.75rem;
+          border-radius: 0.5rem;
+          transition: background-color 0.2s;
+        }
+        
+        .contact-item:hover {
+          background-color: #f1f5f9;
+        }
+        
+        .icon-wrapper {
+          width: 3rem;
+          height: 3rem;
+          border-radius: 50%;
+          background-color: #e0f2fe;
+          color: #0369a1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+        
+        .icon-wrapper svg {
+          width: 1.5rem;
+          height: 1.5rem;
+        }
+        
+        .contact-text p:first-child {
+          font-size: 0.875rem;
+          color: #64748b;
+          margin-bottom: 0.25rem;
+        }
+        
+        .contact-value {
+          font-weight: 500;
+          color: #0ea5e9 !important;
+        }
+        
+        .meet-button {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          background-color: #0ea5e9;
+          color: white;
+          border: none;
+          border-radius: 0.5rem;
+          padding: 0.75rem 1.5rem;
+          font-size: 1rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: background-color 0.2s;
+          width: 100%;
+        }
+        
+        .meet-button:hover {
+          background-color: #0284c7;
+        }
+        
+        .meet-button svg {
+          width: 1.25rem;
+          height: 1.25rem;
+        }
+        
+        /* Chatbot Styles */
+        .chatbot-widget {
+          position: fixed;
+          bottom: 2rem;
+          right: 2rem;
+          width: 24rem;
+          max-width: calc(100vw - 4rem);
+          background: white;
+          border-radius: 1rem;
+          box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+          z-index: 1000;
+          overflow: hidden;
+          transition: all 0.3s ease;
+          max-height: 32rem;
+        }
+        
+        .chatbot-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 1rem 1.5rem;
+          background: #0ea5e9;
+          color: white;
+          cursor: pointer;
+        }
+        
+        .chatbot-title {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+        }
+        
+        .chatbot-avatar {
+          width: 2.5rem;
+          height: 2.5rem;
+          border-radius: 50%;
+          background: white;
+          color: #0ea5e9;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: bold;
+          font-size: 1.125rem;
+        }
+        
+        .chatbot-title h3 {
+          font-size: 1.125rem;
+          font-weight: 600;
+          margin: 0;
+        }
+        
+        .chatbot-title p {
+          font-size: 0.875rem;
+          opacity: 0.9;
+          margin: 0;
+        }
+        
+        .chatbot-toggle {
+          background: transparent;
+          border: none;
+          color: white;
+          cursor: pointer;
+          padding: 0.25rem;
+          border-radius: 0.25rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .chatbot-toggle svg {
+          width: 1.25rem;
+          height: 1.25rem;
+        }
+        
+        .chatbot-content {
+          display: flex;
+          flex-direction: column;
+          height: 24rem;
+        }
+        
+        .chatbot-messages {
+          flex: 1;
+          padding: 1rem;
+          overflow-y: auto;
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+        }
+        
+        .message {
+          padding: 0.75rem 1rem;
+          border-radius: 1rem;
+          max-width: 80%;
+          line-height: 1.4;
+        }
+        
+        .message.bot {
+          background: #f1f5f9;
+          color: #334155;
+          align-self: flex-start;
+          border-bottom-left-radius: 0.25rem;
+        }
+        
+        .message.user {
+          background: #0ea5e9;
+          color: white;
+          align-self: flex-end;
+          border-bottom-right-radius: 0.25rem;
+        }
+        
+        .chatbot-input {
+          display: flex;
+          padding: 1rem;
+          border-top: 1px solid #e2e8f0;
+          gap: 0.5rem;
+        }
+        
+        .chatbot-input input {
+          flex: 1;
+          padding: 0.75rem 1rem;
+          border: 1px solid #e2e8f0;
+          border-radius: 2rem;
+          outline: none;
+          font-size: 0.875rem;
+        }
+        
+        .chatbot-input input:focus {
+          border-color: #0ea5e9;
+        }
+        
+        .chatbot-input button {
+          background: #0ea5e9;
+          color: white;
+          border: none;
+          border-radius: 50%;
+          width: 2.75rem;
+          height: 2.75rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          transition: background-color 0.2s;
+        }
+        
+        .chatbot-input button:hover {
+          background: #0284c7;
+        }
+        
+        .chatbot-input button svg {
+          width: 1.25rem;
+          height: 1.25rem;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+          .page-header h1 {
+            font-size: 2rem;
+          }
+          
+          .contact-info-card, .meet-card {
+            padding: 1.5rem;
+          }
+          
+          .chatbot-widget {
+            right: 1rem;
+            bottom: 1rem;
+            width: calc(100vw - 2rem);
+          }
+        }
+      `}</style>
+    </div>
   );
-}
+};
 
-// ---- Main Page Component ----
-export default function ContactUsPage() {
-  return (
-    <main className="contact-wrapper">
-      <header className="contact-hero">
-        <h1>Contact EduSens Africa</h1>
-        <p>Connect with us via live video, real-time chat, email, or our AI assistant.</p>
-      </header>
-
-      <section className="contact-grid">
-        <GoogleMeetSection />
-        <MessagingSection />
-        <EmailFormSection />
-      </section>
-
-      <FloatingChatbot />
-    </main>
-  );
-}
+export default ContactUsPage;

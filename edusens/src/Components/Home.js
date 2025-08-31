@@ -1,11 +1,62 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import './Home.css';
 // eslint-disable-next-line
-import { FaRobot, FaChartLine, FaUserTie } from 'react-icons/fa';
+import { FaRobot, FaChartLine, FaUserTie, FaPlay, FaPause } from 'react-icons/fa';
 import { GiMagnifyingGlass } from 'react-icons/gi';
-import heroImage from "../Assets/GRAD.jpeg"
+import heroImage from "../Assets/GRAD.jpeg";
+import introVideo from '../Assets/eDusens.mp4';
 
+// Video component
+const VideoPlayer = () => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const videoRef = useRef(null);
+
+  const togglePlay = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+      } else {
+        videoRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  return (
+    <section className="video-section">
+      <div className="video-container">
+        <h2>Discover Your Future with EduSens</h2>
+        <p>Watch our introductory video to learn how we help students find their career path</p>
+        
+        <div className="video-wrapper">
+          <video 
+            ref={videoRef}
+            className="intro-video"
+            poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23e2e8f0'/%3E%3Cpath d='M6,3 L10,5 L6,7 Z' fill='%230ea5e9'/%3E%3C/svg%3E"
+            controls
+          >
+            {/* In a real implementation, you would add your video source here */}
+            <source src={introVideo} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          
+          {!isPlaying && (
+            <div className="video-overlay" onClick={togglePlay}>
+              <button className="play-button">
+                {isPlaying ? <FaPause /> : <FaPlay />}
+              </button>
+            </div>
+          )}
+        </div>
+        
+        <div className="video-caption">
+          <p>EduSens Africa - Guiding students to their perfect career since 2023</p>
+        </div>
+      </div>
+    </section>
+  );
+};
 
 function Home() {
   return (
@@ -21,6 +72,9 @@ function Home() {
           <img src={heroImage} alt="Future calling" />
         </div>
       </section>
+
+      {/* Video Section */}
+      <VideoPlayer />
 
       {/* Steps Section */}
       <section className="steps-section">

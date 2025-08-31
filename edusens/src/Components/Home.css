@@ -207,6 +207,121 @@ h1 {
   background: linear-gradient(to right, #2980b9, #8e44ad);
 }
 
+/* Video Section Styles */
+.video-section {
+  padding: 4rem 2rem;
+  background: linear-gradient(to bottom, #f8fafc, #e2e8f0);
+  text-align: center;
+}
+
+.video-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.video-container h2 {
+  font-size: 2rem;
+  color: #1e293b;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+.video-container > p {
+  font-size: 1.125rem;
+  color: #64748b;
+  margin-bottom: 2rem;
+}
+
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+.intro-video {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16/9;
+  display: block;
+  background-color: #e2e8f0;
+}
+
+.video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.video-overlay:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.play-button {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(14, 165, 233, 0.9);
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.play-button:hover {
+  background: rgba(14, 165, 233, 1);
+  transform: scale(1.1);
+}
+
+.play-button svg {
+  width: 30px;
+  height: 30px;
+}
+
+.video-caption {
+  margin-top: 1.5rem;
+}
+
+.video-caption p {
+  color: #64748b;
+  font-style: italic;
+}
+
+/* Responsive adjustments for video section */
+@media (max-width: 768px) {
+  .video-section {
+    padding: 2rem 1rem;
+  }
+  
+  .video-container h2 {
+    font-size: 1.75rem;
+  }
+  
+  .play-button {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .play-button svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 1920px) {
   .home-container {
