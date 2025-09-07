@@ -8,6 +8,7 @@ const CareerExplorer = () => {
   const [careerCode, setCareerCode] = useState('');
   const [activeTab, setActiveTab] = useState('curriculum');
   const [selectedCareer, setSelectedCareer] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
   const params = useParams();
 
@@ -328,6 +329,17 @@ const CareerExplorer = () => {
   // eslint-disable-next-line
   [params.slug, navigate]);
 
+  // Filter careers based on search term
+  const filteredCareers = careers.filter(career => 
+    career.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    career.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    career.fullDescription.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
   const handleLearnMore = (slug) => {
     navigate(`/career/${slug}`);
   };
@@ -355,10 +367,31 @@ const CareerExplorer = () => {
             <p className="subtitle">
               Discover your future career with our comprehensive courses. Each program offers structured learning, expert support, and practical tools to shape your future.
             </p>
+            
+            <div className="search-container">
+              <div className="search-wrapper">
+                <input
+                  type="text"
+                  placeholder="Search for careers..."
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  className="search-input"
+                  aria-label="Search careers"
+                />
+                <div className="search-icon">
+                  🔍
+                </div>
+              </div>
+              {searchTerm && (
+                <p className="search-results-text">
+                  {filteredCareers.length} career{filteredCareers.length !== 1 ? 's' : ''} found
+                </p>
+              )}
+            </div>
           </header>
 
           <div className="career-grid">
-            {careers.map(career => (
+            {filteredCareers.map(career => (
               <div key={career.id} className="career-card">
                 <h2>{career.title}</h2>
                 <p className="career-description">{career.description}</p>
@@ -372,6 +405,11 @@ const CareerExplorer = () => {
                 </button>
               </div>
             ))}
+            {filteredCareers.length === 0 && searchTerm && (
+              <div className="no-results">
+                <p>No careers found matching "{searchTerm}". Try different keywords or browse all careers above.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
