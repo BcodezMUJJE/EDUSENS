@@ -8,6 +8,7 @@ const CareerExplorer = () => {
   const [careerCode, setCareerCode] = useState('');
   const [activeTab, setActiveTab] = useState('curriculum');
   const [selectedCareer, setSelectedCareer] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
   const params = useParams();
 
@@ -333,7 +334,7 @@ const CareerExplorer = () => {
   };
 
   const handleBackToList = () => {
-    navigate('/careers');
+    navigate('/Edusens-Careers');
   };
   // eslint-disable-next-line
   const handleSubmit = (e) => {
@@ -343,6 +344,17 @@ const CareerExplorer = () => {
 
   const handleGetStarted = () => {
     alert(`Enrollment started for ${selectedCareer.title}!`);
+  };
+
+  // Filter careers based on search term
+  const filteredCareers = careers.filter(career =>
+    career.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    career.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
   };
 
   // Render the list view (CareerPage)
@@ -355,23 +367,45 @@ const CareerExplorer = () => {
             <p className="subtitle">
               Discover your future career with our comprehensive courses. Each program offers structured learning, expert support, and practical tools to shape your future.
             </p>
+            
+            <div className="search-container">
+              <div className="search-bar">
+                <input
+                  type="text"
+                  placeholder="Search for careers..."
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  className="search-input"
+                />
+                <div className="search-icon">
+                  🔍
+                </div>
+              </div>
+            </div>
           </header>
 
           <div className="career-grid">
-            {careers.map(career => (
-              <div key={career.id} className="career-card">
-                <h2>{career.title}</h2>
-                <p className="career-description">{career.description}</p>
-                <p className="career-cta">{career.cta}</p>
-                <button 
-                  className="learn-more-btn"
-                  onClick={() => handleLearnMore(career.slug)}
-                  aria-label={`Learn more about ${career.title} career`}
-                >
-                  Learn More
-                </button>
+            {filteredCareers.length > 0 ? (
+              filteredCareers.map(career => (
+                <div key={career.id} className="career-card">
+                  <h2>{career.title}</h2>
+                  <p className="career-description">{career.description}</p>
+                  <p className="career-cta">{career.cta}</p>
+                  <button 
+                    className="learn-more-btn"
+                    onClick={() => handleLearnMore(career.slug)}
+                    aria-label={`Learn more about ${career.title} career`}
+                  >
+                    Learn More
+                  </button>
+                </div>
+              ))
+            ) : (
+              <div className="no-results">
+                <h3>No careers found</h3>
+                <p>Try adjusting your search terms or browse all available careers.</p>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </div>

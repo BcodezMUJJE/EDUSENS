@@ -19,6 +19,7 @@ function App() {
           <Route path='/Our-Services' element={<OurServices />} />
           <Route path='/Ai-Careers' element={<AICareerQuiz />} />
 	        <Route path='/Edusens-Careers' element={<CareerExplorer />} />
+          <Route path='/career/:slug' element={<CareerExplorer />} />
           <Route path='/job-shadowing' element={<JobShadowing />} />
           <Route path='/contact-us' element={<ContactUsPage />} />
         </Routes>
