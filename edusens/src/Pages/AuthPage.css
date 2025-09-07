@@ -1,0 +1,348 @@
+/* Main container - no longer needs to account for fixed navbar */
+.auth-page-container {
+  width: 100%;
+  /* Remove padding-top since navbar is now static */
+}
+
+.auth-page {
+  min-height: 100vh; /* Full height, no need to subtract navbar height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1rem;
+  background-color: #f8fafc;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 450px;
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 2.5rem 2rem;
+  margin: 1rem 0;
+  z-index: 1; /* Lower than navbar z-index */
+}
+
+/* Header styling */
+.auth-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.logo-link {
+  display: inline-block;
+  margin-bottom: 1.5rem;
+}
+
+.auth-logo {
+  height: 50px;
+}
+
+.auth-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.auth-header p {
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+/* OAuth buttons */
+.oauth-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.oauth-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+  background-color: white;
+  color: #334155;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.oauth-button:hover:not(:disabled) {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.oauth-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.oauth-button img {
+  width: 1.25rem;
+  height: 1.25rem;
+  object-fit: contain;
+}
+
+/* Divider styling */
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0;
+  color: #94a3b8;
+  font-size: 0.875rem;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background-color: #e2e8f0;
+}
+
+.divider span {
+  padding: 0 1rem;
+}
+
+/* Form styling */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+.form-group input {
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease;
+  background-color: white;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+}
+
+.form-group input:disabled {
+  background-color: #f8fafc;
+  cursor: not-allowed;
+}
+
+.password-hint {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 0.25rem;
+}
+
+/* Password input with toggle */
+.password-input-container {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.toggle-password svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.toggle-password:hover {
+  color: #64748b;
+}
+
+/* Forgot password link */
+.forgot-password {
+  text-align: right;
+  margin-top: 0.25rem;
+}
+
+.forgot-password a {
+  color: #0ea5e9;
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+
+.forgot-password a:hover {
+  text-decoration: underline;
+}
+
+/* Error and success messages */
+.error-message,
+.success-message {
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.error-message {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.success-message {
+  background-color: #dcfce7;
+  color: #166534;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.error-message::before {
+  content: "⚠️";
+}
+
+.success-message svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Submit button */
+.submit-button {
+  background-color: #0ea5e9;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-top: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 3rem;
+}
+
+.submit-button:hover:not(:disabled) {
+  background-color: #0284c7;
+}
+
+.submit-button:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+}
+
+/* Loading spinner */
+.loading-spinner {
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top: 2px solid white;
+  width: 1.25rem;
+  height: 1.25rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Footer section */
+.auth-footer {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.auth-footer p {
+  color: #64748b;
+}
+
+.toggle-auth-mode {
+  background: none;
+  border: none;
+  color: #0ea5e9;
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  padding: 0;
+}
+
+.toggle-auth-mode:hover:not(:disabled) {
+  text-decoration: underline;
+}
+
+.toggle-auth-mode:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .auth-container {
+    padding: 2rem 1.5rem;
+  }
+  
+  .oauth-buttons {
+    gap: 0.625rem;
+  }
+  
+  .auth-logo {
+    height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-page {
+    padding: 1.5rem 1rem;
+  }
+  
+  .auth-container {
+    padding: 1.75rem 1.25rem;
+  }
+  
+  .oauth-button {
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+  }
+  
+  .auth-header h1 {
+    font-size: 1.25rem;
+  }
+}

@@ -8,8 +8,10 @@ const CareerExplorer = () => {
   const [careerCode, setCareerCode] = useState('');
   const [activeTab, setActiveTab] = useState('curriculum');
   const [selectedCareer, setSelectedCareer] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const navigate = useNavigate();
   const params = useParams();
+
 
   // All 35 career data
   const careers = [
@@ -335,6 +337,7 @@ const CareerExplorer = () => {
   const handleBackToList = () => {
     navigate('/careers');
   };
+  
   // eslint-disable-next-line
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -345,6 +348,16 @@ const CareerExplorer = () => {
     alert(`Enrollment started for ${selectedCareer.title}!`);
   };
 
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  // Filter careers based on search term
+  const filteredCareers = careers.filter(career => 
+    career.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    career.description.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   // Render the list view (CareerPage)
   if (view === 'list') {
     return (
@@ -353,26 +366,60 @@ const CareerExplorer = () => {
           <header className="career-header">
             <h1>Explore Career Paths</h1>
             <p className="subtitle">
-              Discover your future career with our comprehensive courses. Each program offers structured learning, expert support, and practical tools to shape your future.
+              Each program offers a detailed breakdown of what the career is all about, from education to employment, with practical tools to shape your future.
             </p>
+
+            <div className="search-container">
+              <input
+                type="text"
+                placeholder="Search for careers..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+                className="career-search"
+                aria-label="Search for careers"
+              />
+              {searchTerm && (
+                <button 
+                  className="clear-search" 
+                  onClick={() => setSearchTerm('')}
+                  aria-label="Clear search"
+                >
+                  ×
+                </button>
+              )}
+            </div>
           </header>
 
-          <div className="career-grid">
-            {careers.map(career => (
-              <div key={career.id} className="career-card">
-                <h2>{career.title}</h2>
-                <p className="career-description">{career.description}</p>
-                <p className="career-cta">{career.cta}</p>
-                <button 
-                  className="learn-more-btn"
-                  onClick={() => handleLearnMore(career.slug)}
-                  aria-label={`Learn more about ${career.title} career`}
-                >
-                  Learn More
-                </button>
-              </div>
-            ))}
-          </div>
+          {filteredCareers.length === 0 ? (
+            <div className="no-results">
+              <h2>No careers found</h2>
+              <p>Try adjusting your search terms or explore our full catalog.</p>
+              <button 
+                className="reset-search-btn"
+                onClick={() => setSearchTerm('')}
+                aria-label="Reset search"
+              >
+                View All Careers
+              </button>
+            </div>
+          ) : (
+            <div className="career-grid">
+              {filteredCareers.map(career => (
+                <div key={career.id} className="career-card">
+                  <h2>{career.title}</h2>
+                  <p className="career-description">{career.description}</p>
+                  <p className="career-cta">{career.cta}</p>
+                  <button 
+                    className="learn-more-btn"
+                    onClick={() => handleLearnMore(career.slug)}
+                    aria-label={`Learn more about ${career.title} career`}
+                  >
+                    Learn More
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     );

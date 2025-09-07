@@ -1,25 +1,131 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import QueryForm from './QueryForm';
 
 const ContactUsPage = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { text: 'Hello 👋, I’m EduBot. I can tell you a bit about EduSens Africa and help guide you on career learning courses for children.', sender: 'bot' }
+    { text: 'Hello 👋, I\'m EduBot. I can tell you a bit about EduSens Africa and help guide you on career learning courses for children.', sender: 'bot' }
   ]);
   const [inputMessage, setInputMessage] = useState('');
+  const messagesEndRef = useRef(null);
+
+  // Define intents and their corresponding patterns and responses
+  const intents = {
+    greeting: {
+      patterns: ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'greetings'],
+      response: "Hi 👋 Welcome to EduSens Africa! I'm your virtual assistant, here to help you explore careers, education programs, and real-world job experiences. What would you like to know about today?"
+    },
+    services: {
+      patterns: ['what services do you offer', 'tell me about your services', 'what do you do', 'services'],
+      response: "We currently offer three main services:\n1️⃣ AI Career Guidance (Available across Africa)\n2️⃣ Career Education Programs (Available across Africa)\n3️⃣ Job Shadowing (Currently in Kenya only)\nWhich one would you like to learn more about?"
+    },
+    aiCareerGuidance: {
+      patterns: ['tell me about ai career guidance', 'career guidance', 'career quiz', 'ai career guidance'],
+      response: "Our AI Career Guidance helps you discover careers that align with your strengths, personality, and interests 🎯. You'll interact with our AI through an exciting quiz—the more you share, the better the feedback you get. Would you like me to show you how to get started?"
+    },
+    careerEducation: {
+      patterns: ['tell me about career education', 'career education', 'career programs'],
+      response: "Our Career Education Program is a 3-week journey that begins with training on motivation, self-belief, and personal development before diving deep into your chosen career.\n\nYou'll explore:\n\n• Educational requirements\n\n• Institutions offering the program\n\n• Job opportunities & skills needed\n\n• Insights from real professionals, details of the job duties\n\n🗓 Runs during school holidays (April, August, November–December).\n📱💻 Accessible via phone, computer, or laptop with internet.\nParents can also sign up for progress updates as students hit milestones."
+    },
+    jobShadowing: {
+      patterns: ['tell me about job shadowing', 'job shadowing', 'shadowing program'],
+      response: "Our Job Shadowing program offers a 3-day real-world experience with a qualified professional in your chosen field. You'll see what the career is really like—virtually or physically (depending on your preference and the profession).\n\n📍 Currently available in Kenya only, during school holidays, and must be booked in advance. Would you like me to share how to apply?"
+    },
+    support: {
+      patterns: ['i need help', 'support', 'contact', 'how can i reach you'],
+      response: "I can help you with:\n1️⃣ Service Information\n2️⃣ Program Registration\n3️⃣ Parent Updates\n4️⃣ Contact Support Team\n5️⃣ Social Media Links"
+    },
+    parentUpdates: {
+      patterns: ['how can parents track progress', 'parent updates', 'parents info'],
+      response: "Parents can sign up alongside their children to receive updates on their child's progress and milestones 🎯. Would you like me to guide you on how to enroll for updates?"
+    },
+    contact: {
+      patterns: ['how do i contact you', 'contact info', 'email', 'whatsapp'],
+      response: "You can reach us at:\n📧 Email: info@edusensafrica.com\n\n📲 WhatsApp: +254790966319"
+    },
+    socialMedia: {
+      patterns: ['social media', 'facebook', 'twitter', 'youtube', 'x'],
+      response: "Follow us for updates:\nYouTube: EduSens Africa\nFacebook: EduSens Africa\nX (Twitter): @edusensafrica"
+    },
+    whoCanJoin: {
+      patterns: ['who can join', 'eligibility', 'who is this for'],
+      response: "Our AI Career Guidance and Career Education programs are open to all users across Africa. Job shadowing is currently available in Kenya 🇰🇪."
+    },
+    programTiming: {
+      patterns: ['when are your programs', 'schedule', 'when do they run'],
+      response: "Our Career Education and Job Shadowing programs run during school holidays: April, August, and November–December."
+    },
+    duration: {
+      patterns: ['how long are the programs', 'duration', 'length of program'],
+      response: "Career Education → 3 weeks; Job Shadowing → 3 days"
+    },
+    onlineOrPhysical: {
+      patterns: ['are your services online', 'virtual or physical', 'how to access'],
+      response: "All our programs can be accessed online through mobile phone, computer, or laptop with an internet connection. Job Shadowing can be virtual or physical."
+    },
+    parentTracking: {
+      patterns: ['can parents track progress', 'do parents get updates'],
+      response: "Yes ✅ Parents can sign up for updates."
+    },
+    registration: {
+      patterns: ['how do i register', 'sign up', 'join program'],
+      response: "You can register by contacting us on WhatsApp: +254790966319 or email: info@edusensafrica.com"
+    },
+    fees: {
+      patterns: ['is it free', 'cost', 'fees', 'pricing'],
+      response: "Our programs have affordable fees depending on the service."
+    },
+    closing: {
+      patterns: ['thanks', 'goodbye', 'end chat', 'bye'],
+      response: "Thanks for chatting with EduSens Africa today. Don't forget to follow us on YouTube, Facebook, and X for updates. Wishing you success on your career journey 🚀 Come back anytime for more guidance!"
+    },
+    fallback: {
+      response: "I'm not sure I understand. Would you like to know about our services, career guidance, education programs, or job shadowing opportunities? You can also ask about how to contact us or get support."
+    }
+  };
+
+  // Function to identify the intent based on user input
+  const identifyIntent = (input) => {
+    const normalizedInput = input.toLowerCase().trim();
+    
+    for (const [intent, data] of Object.entries(intents)) {
+      if (intent === 'fallback') continue;
+      
+      for (const pattern of data.patterns) {
+        if (normalizedInput.includes(pattern.toLowerCase())) {
+          return intent;
+        }
+      }
+    }
+    
+    return 'fallback';
+  };
 
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (inputMessage.trim() === '') return;
     
     // Add user message
-    setMessages([...messages, { text: inputMessage, sender: 'user' }]);
+    const userMsg = inputMessage.trim();
+    setMessages(prev => [...prev, { text: userMsg, sender: 'user' }]);
     setInputMessage('');
     
-    // Simulate bot response after a short delay
+    // Identify intent and get response
+    const intent = identifyIntent(userMsg);
+    const botResponse = intents[intent].response;
+    
+    // Add bot response after a short delay
     setTimeout(() => {
-      setMessages(prev => [...prev, { text: "I'm a demo chatbot. In a real implementation, I would provide helpful responses about EduSens Africa and educational courses.", sender: 'bot' }]);
-    }, 1000);
+      setMessages(prev => [...prev, { text: botResponse, sender: 'bot' }]);
+    }, 600);
   };
+
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
 
   const handleEmailClick = () => {
     window.location.href = 'mailto:info@edusensafrica.com';
@@ -84,6 +190,11 @@ const ContactUsPage = () => {
             </button>
           </div>
         </div>
+        
+        {/* Add the query form section */}
+        <div className="query-section">
+          <QueryForm />
+        </div>
       </div>
 
       {/* Chatbot Widget */}
@@ -96,7 +207,7 @@ const ContactUsPage = () => {
               <p>{isChatOpen ? 'Ask me anything' : 'Online'}</p>
             </div>
           </div>
-          <button className="chatbot-toggle">
+          <button className="chatbot-toggle" aria-label={isChatOpen ? 'Close chat' : 'Open chat'}>
             {isChatOpen ? (
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                 <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
@@ -114,19 +225,42 @@ const ContactUsPage = () => {
             <div className="chatbot-messages">
               {messages.map((message, index) => (
                 <div key={index} className={`message ${message.sender}`}>
-                  {message.text}
+                  {message.text.split('\n').map((line, i) => (
+                    <React.Fragment key={i}>
+                      {line}
+                      {i < message.text.split('\n').length - 1 && <br />}
+                    </React.Fragment>
+                  ))}
                 </div>
               ))}
+              <div ref={messagesEndRef} />
             </div>
 
-            <form className="chatbot-input" onSubmit={handleSendMessage}>
+            <div className="quick-replies">
+              <button onClick={() => {
+                setInputMessage('What services do you offer?');
+                handleSendMessage({ preventDefault: () => {} });
+              }}>Services</button>
+              <button onClick={() => {
+                setInputMessage('Career guidance');
+                handleSendMessage({ preventDefault: () => {} });
+              }}>Career Guidance</button>
+              <button onClick={() => {
+                setInputMessage('Contact info');
+                handleSendMessage({ preventDefault: () => {} });
+              }}>Contact</button>
+            </div>
+
+            <form className="chatbot-input-form" onSubmit={handleSendMessage}>
               <input
                 type="text"
+                className="chatbot-input"
                 placeholder="Type your message here..."
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
+                aria-label="Chat message"
               />
-              <button type="submit">
+              <button type="submit" className="chatbot-send-button" aria-label="Send message">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z" />
                 </svg>
@@ -356,7 +490,8 @@ const ContactUsPage = () => {
         .chatbot-content {
           display: flex;
           flex-direction: column;
-          height: 24rem;
+          height: 28rem;
+          max-height: calc(100vh - 12rem);
         }
         
         .chatbot-messages {
@@ -366,20 +501,48 @@ const ContactUsPage = () => {
           display: flex;
           flex-direction: column;
           gap: 0.75rem;
+          font-size: 0.95rem;
         }
         
         .message {
           padding: 0.75rem 1rem;
           border-radius: 1rem;
-          max-width: 80%;
-          line-height: 1.4;
+          max-width: 90%;
+          line-height: 1.5;
+          white-space: pre-line;
         }
         
+        /* Quick reply buttons */
+        .quick-replies {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+          padding: 0.5rem 1rem;
+          border-top: 1px solid #e2e8f0;
+        }
+        
+        .quick-replies button {
+          background-color: #e0f2fe;
+          color: #0369a1;
+          border: none;
+          padding: 0.5rem 1rem;
+          border-radius: 1rem;
+          font-size: 0.85rem;
+          cursor: pointer;
+          transition: all 0.2s ease;
+        }
+        
+        .quick-replies button:hover {
+          background-color: #bae6fd;
+        }
+        
+        /* Make bot messages look nicer */
         .message.bot {
           background: #f1f5f9;
           color: #334155;
           align-self: flex-start;
           border-bottom-left-radius: 0.25rem;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         }
         
         .message.user {
@@ -387,52 +550,91 @@ const ContactUsPage = () => {
           color: white;
           align-self: flex-end;
           border-bottom-right-radius: 0.25rem;
+          box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
         
-        .chatbot-input {
+        /* Improve accessibility */
+        .chatbot-widget:focus-within {
+          outline: 2px solid #0ea5e9;
+        }
+        
+        /* Add some animation for better UX */
+        @keyframes slideIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message {
+          animation: slideIn 0.3s ease-out;
+        }
+        
+        /* Form structure */
+        .chatbot-input-form {
           display: flex;
-          padding: 1rem;
-          border-top: 1px solid #e2e8f0;
+          align-items: center;
           gap: 0.5rem;
+          padding: 0.5rem 1rem;
+          border-top: 1px solid #e2e8f0;
         }
         
-        .chatbot-input input {
-          flex: 1;
+        /* Explicit input styling */
+        .chatbot-input {
+          background-color: #f9fafb;
+          border: 1px solid #d1d5db;
+          border-radius: 0.5rem;
           padding: 0.75rem 1rem;
-          border: 1px solid #e2e8f0;
-          border-radius: 2rem;
-          outline: none;
           font-size: 0.875rem;
+          color: #334155;
+          width: 100%;
+          box-sizing: border-box;
         }
         
-        .chatbot-input input:focus {
+        .chatbot-input::placeholder {
+          color: #a1a1a1;
+        }
+        
+        .chatbot-input:focus {
+          outline: none;
           border-color: #0ea5e9;
+          box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.1);
         }
         
-        .chatbot-input button {
-          background: #0ea5e9;
+        .chatbot-send-button {
+          background-color: #0ea5e9;
           color: white;
           border: none;
-          border-radius: 50%;
-          width: 2.75rem;
-          height: 2.75rem;
+          border-radius: 0.5rem;
+          padding: 0.75rem;
+          font-size: 1rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: background-color 0.2s;
           display: flex;
           align-items: center;
           justify-content: center;
-          cursor: pointer;
-          transition: background-color 0.2s;
+          width: 2.5rem;
+          height: 2.5rem;
+          flex-shrink: 0;
         }
         
-        .chatbot-input button:hover {
-          background: #0284c7;
+        .chatbot-send-button:hover {
+          background-color: #0284c7;
         }
         
-        .chatbot-input button svg {
+        .chatbot-send-button svg {
           width: 1.25rem;
           height: 1.25rem;
         }
         
-        /* Responsive adjustments */
+        /* Query form section styles */
+        .query-section {
+          margin-top: 3rem;
+          padding: 2rem;
+          background-color: white;
+          border-radius: 1rem;
+          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
         @media (max-width: 640px) {
           .page-header h1 {
             font-size: 2rem;
@@ -446,6 +648,10 @@ const ContactUsPage = () => {
             right: 1rem;
             bottom: 1rem;
             width: calc(100vw - 2rem);
+          }
+          
+          .query-section {
+            padding: 1.5rem;
           }
         }
       `}</style>

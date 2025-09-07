@@ -36,3 +36,14 @@
     transform: rotate(360deg);
   }
 }
+
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-wrapper {
+  flex: 1;
+  margin-top: 74px; /* Height of navbar (70px) + indicator bar (4px) */
+}
