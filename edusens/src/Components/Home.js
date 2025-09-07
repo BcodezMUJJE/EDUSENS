@@ -5,7 +5,7 @@ import './Home.css';
 import { FaRobot, FaChartLine, FaUserTie, FaPlay, FaPause } from 'react-icons/fa';
 import { GiMagnifyingGlass } from 'react-icons/gi';
 import heroImage from "../Assets/GRAD.jpeg";
-import introVideo from '../Assets/eDusens.mp4';
+import introVideo from '../Assets/e.mp4';
 
 // Video component
 const VideoPlayer = () => {
