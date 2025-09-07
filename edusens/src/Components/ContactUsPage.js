@@ -135,9 +135,8 @@ const ContactUsPage = () => {
     window.location.href = 'tel:+254790966319';
   };
 
-  const handleMeetClick = () => {
-    // In a real implementation, this would open Google Meet within the app
-    window.open('https://meet.google.com/', '_self');
+  const handleWhatsAppClick = () => {
+    window.location.href = 'https://wa.me/254790966319';
   };
 
   return (
@@ -179,14 +178,14 @@ const ContactUsPage = () => {
             </div>
           </div>
 
-          <div className="meet-card">
-            <h2>Instant Video Meeting</h2>
-            <p>Connect with our team via Google Meet for immediate assistance</p>
-            <button className="meet-button" onClick={handleMeetClick}>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M4.5 4.5a3 3 0 00-3 3v9a3 3 0 003 3h8.25a3 3 0 003-3v-9a3 3 0 00-3-3H4.5zM19.94 18.75l-2.69-2.69V7.94l2.69-2.69c.944-.945 2.56-.276 2.56 1.06v11.38c0 1.336-1.616 2.005-2.56 1.06z" />
+          <div className="whatsapp-card">
+            <h2>Contact on WhatsApp</h2>
+            <p>For Inquiries: +254790966319</p>
+            <button className="whatsapp-button" onClick={handleWhatsAppClick}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="whatsapp-icon">
+                <path d="M12 2a10 10 0 0 0-8.6 15l-1.1 3.3 3.4-1.1A10 10 0 1 0 12 2zm0 18.1a8.1 8.1 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3a8.1 8.1 0 1 1 6.8 3.7zm4.7-6.1c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.6.1-.2.2-.6.8-.8.9-.1.2-.3.2-.6.1-.8-.4-1.9-.7-2.7-2.2-.2-.4.2-.3.6-1.1.1-.1 0-.3 0-.4l-.6-1.5c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.5.5-.8 1.1-.8 1.9.1.9.4 1.8 1 2.6 1.1 1.6 2.5 2.6 4.2 3.1.6.1 1.1.2 1.7.2.5 0 1-.2 1.4-.5.3-.2.6-.5.7-.9.2-.4.2-.8.1-.9 0-.2-.2-.3-.4-.4z"/>
               </svg>
-              Start Google Meet
+              Chat on WhatsApp
             </button>
           </div>
         </div>
@@ -314,7 +313,7 @@ const ContactUsPage = () => {
           }
         }
         
-        .contact-info-card, .meet-card {
+        .contact-info-card, .whatsapp-card {
           background: white;
           border-radius: 1rem;
           padding: 2rem;
@@ -322,21 +321,22 @@ const ContactUsPage = () => {
           transition: transform 0.2s, box-shadow 0.2s;
         }
         
-        .contact-info-card:hover, .meet-card:hover {
+        .contact-info-card:hover, .whatsapp-card:hover {
           transform: translateY(-4px);
           box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
         
-        .contact-info-card h2, .meet-card h2 {
+        .contact-info-card h2, .whatsapp-card h2 {
           font-size: 1.5rem;
           color: #1e293b;
           margin-bottom: 1rem;
           font-weight: 600;
         }
         
-        .contact-info-card p, .meet-card p {
+        .contact-info-card p, .whatsapp-card p {
           color: #64748b;
           margin-bottom: 1.5rem;
+          font-size: 1.1rem;
         }
         
         .contact-details {
@@ -387,12 +387,12 @@ const ContactUsPage = () => {
           color: #0ea5e9 !important;
         }
         
-        .meet-button {
+        .whatsapp-button {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 0.5rem;
-          background-color: #0ea5e9;
+          gap: 0.75rem;
+          background-color: #25D366; /* WhatsApp green */
           color: white;
           border: none;
           border-radius: 0.5rem;
@@ -404,13 +404,13 @@ const ContactUsPage = () => {
           width: 100%;
         }
         
-        .meet-button:hover {
-          background-color: #0284c7;
+        .whatsapp-button:hover {
+          background-color: #128C7E; /* Darker WhatsApp green */
         }
         
-        .meet-button svg {
-          width: 1.25rem;
-          height: 1.25rem;
+        .whatsapp-icon {
+          width: 1.5rem;
+          height: 1.5rem;
         }
         
         /* Chatbot Styles */
@@ -640,7 +640,7 @@ const ContactUsPage = () => {
             font-size: 2rem;
           }
           
-          .contact-info-card, .meet-card {
+          .contact-info-card, .whatsapp-card {
             padding: 1.5rem;
           }
           
