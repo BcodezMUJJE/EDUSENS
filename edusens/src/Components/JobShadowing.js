@@ -1,10 +1,12 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './JobShadowing.css';
 
 const JobShadowing = () => {
+  const navigate = useNavigate();
+
   const handleApplyClick = () => {
-    // You can add navigation logic here later
-    alert('Application process starting soon!');
+    navigate('/job-shadowing-coming-soon');
   };
 
   return (

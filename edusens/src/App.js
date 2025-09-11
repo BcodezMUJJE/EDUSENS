@@ -9,6 +9,7 @@ import AuthPage from './Pages/AuthPage';
 import OurServices from './Components/OurServices';
 import AICareerQuiz from './Components/AICareerQuiz';
 import JobShadowing from './Components/JobShadowing';
+import ComingSoon from './Components/ComingSoon';
 
 function App() {
   return (
@@ -20,12 +21,13 @@ function App() {
             <Route path='/' element={<Home />} />
             <Route path='/Our-Services' element={<OurServices />} />
             <Route path='/Ai-Careers' element={<AICareerQuiz />} />
-	          <Route path='/Edusens-Careers' element={<CareerExplorer />} />
+          <Route path='/Edusens-Careers' element={<CareerExplorer />} />
             <Route path='/job-shadowing' element={<JobShadowing />} />
             <Route path='/contact-us' element={<ContactUsPage />} />
             <Route path="/careers" element={<CareerExplorer />} />
             <Route path="/career/:slug" element={<CareerExplorer />} />
             <Route path="/auth" element={<AuthPage />} />
+            <Route path="/job-shadowing-coming-soon" element={<ComingSoon />} />
           </Routes>
         </div>
         <Footer />
