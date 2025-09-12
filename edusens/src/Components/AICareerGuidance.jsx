@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './AICareerGuidance.css';
 
 const AICareerGuidance = () => {
+  const navigate = useNavigate();
   const [animate, setAnimate] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [email, setEmail] = useState('');
   const [notified, setNotified] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
-  const [showComingSoon, setShowComingSoon] = useState(false);
-  const [tellMeEmail, setTellMeEmail] = useState('');
-  const [tellMeNotified, setTellMeNotified] = useState(false);
 
   useEffect(() => {
     // Trigger animation after component mounts
@@ -46,24 +45,7 @@ const AICareerGuidance = () => {
   };
 
   const handleTellMeAboutYou = () => {
-    setShowComingSoon(true);
-  };
-
-  const closeComingSoon = () => {
-    setShowComingSoon(false);
-  };
-
-  const handleTellMeSubmit = (e) => {
-    e.preventDefault();
-    // In a real application, you would send this email to your backend
-    console.log('Tell Me About You notification email:', tellMeEmail);
-    setTellMeNotified(true);
-    setTellMeEmail('');
-    
-    // Hide notification success message after 3 seconds
-    setTimeout(() => {
-      setTellMeNotified(false);
-    }, 3000);
+    navigate('/ai-career-guidance-coming-soon');
   };
 
   return (
@@ -181,59 +163,6 @@ const AICareerGuidance = () => {
               </button>
             </form>
           )}
-        </div>
-      </div>
-      
-      {/* AI Career Guidance Coming Soon Popup */}
-      <div className={`coming-soon-popup tell-me-popup ${showComingSoon ? 'show' : ''}`}>
-        <div className="popup-content">
-          <button className="popup-close" onClick={closeComingSoon}>
-            <i className="fas fa-times"></i>
-          </button>
-          <div className="ai-popup-icon">
-            <i className="fas fa-robot"></i>
-          </div>
-          <h2>AI Career Guidance Coming Soon</h2>
-          <p>
-            Our AI career advisor is currently learning and training to provide you with
-            the most accurate and personalized career guidance. We'll notify you as soon
-            as this feature becomes available.
-          </p>
-          
-          {tellMeNotified ? (
-            <div className="success-message">
-              <i className="fas fa-check-circle"></i> Thank you! We'll notify you when our AI career advisor is ready.
-            </div>
-          ) : (
-            <form className="notify-form" onSubmit={handleTellMeSubmit}>
-              <input
-                type="email"
-                className="notify-input"
-                placeholder="Your email address"
-                value={tellMeEmail}
-                onChange={(e) => setTellMeEmail(e.target.value)}
-                required
-              />
-              <button type="submit" className="notify-button">
-                Notify Me
-              </button>
-            </form>
-          )}
-          
-          <div className="ai-features">
-            <div className="ai-feature">
-              <i className="fas fa-comments"></i>
-              <span>Conversational AI</span>
-            </div>
-            <div className="ai-feature">
-              <i className="fas fa-user-graduate"></i>
-              <span>Personalized Advice</span>
-            </div>
-            <div className="ai-feature">
-              <i className="fas fa-industry"></i>
-              <span>Industry Insights</span>
-            </div>
-          </div>
         </div>
       </div>
     </div>
