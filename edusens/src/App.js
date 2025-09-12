@@ -10,6 +10,7 @@ import OurServices from './Components/OurServices';
 import AICareerQuiz from './Components/AICareerQuiz';
 import JobShadowing from './Components/JobShadowing';
 import ComingSoon from './Components/ComingSoon';
+import PaymentPage from './Components/PaymentPage';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
             <Route path="/career/:slug" element={<CareerExplorer />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/job-shadowing-coming-soon" element={<ComingSoon />} />
+            <Route path="/payment" element={<PaymentPage />} />
           </Routes>
         </div>
         <Footer />
