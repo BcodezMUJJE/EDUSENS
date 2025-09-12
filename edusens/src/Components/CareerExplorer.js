@@ -345,7 +345,7 @@ const CareerExplorer = () => {
   };
 
   const handleGetStarted = () => {
-    alert(`Enrollment started for ${selectedCareer.title}!`);
+    navigate('/payment', { state: { career: selectedCareer } });
   };
 
   const handleSearchChange = (e) => {
@@ -407,8 +407,6 @@ const CareerExplorer = () => {
               {filteredCareers.map(career => (
                 <div key={career.id} className="career-card">
                   <h2>{career.title}</h2>
-                  <p className="career-description">{career.description}</p>
-                  <p className="career-cta">{career.cta}</p>
                   <button 
                     className="learn-more-btn"
                     onClick={() => handleLearnMore(career.slug)}

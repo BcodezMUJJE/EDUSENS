@@ -77,3 +77,108 @@
     font-size: 1rem;
   }
 }
+
+/* AI Career Guidance Coming Soon Specific Styles */
+.ai-icon-large {
+  font-size: 4rem;
+  color: #9b59b6;
+  margin: 20px 0;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+.ai-features-coming-soon {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin: 30px 0;
+  flex-wrap: wrap;
+}
+
+.feature-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f8fafc;
+  padding: 20px;
+  border-radius: 10px;
+  width: 180px;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+.feature-preview:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.feature-preview i {
+  font-size: 2.5rem;
+  color: #3498db;
+  margin-bottom: 15px;
+}
+
+.feature-preview span {
+  font-size: 1rem;
+  color: #2c3e50;
+  font-weight: 600;
+  text-align: center;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+
+.back-button {
+  display: inline-block;
+  background-color: #9b59b6;
+  color: white;
+  padding: 12px 25px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  letter-spacing: 1px;
+}
+
+.back-button:hover {
+  background-color: #8e44ad;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(155, 89, 182, 0.3);
+}
+
+@media (max-width: 768px) {
+  .ai-features-coming-soon {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .feature-preview {
+    width: 100%;
+    max-width: 250px;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+}

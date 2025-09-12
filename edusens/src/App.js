@@ -8,8 +8,11 @@ import ContactUsPage from './Components/ContactUsPage';
 import AuthPage from './Pages/AuthPage';
 import OurServices from './Components/OurServices';
 import AICareerQuiz from './Components/AICareerQuiz';
+import AICareerGuidance from './Components/AICareerGuidance';
 import JobShadowing from './Components/JobShadowing';
 import ComingSoon from './Components/ComingSoon';
+import AICareerGuidanceComingSoon from './Components/AICareerGuidanceComingSoon';
+import PaymentPage from './Components/PaymentPage';
 
 function App() {
   return (
@@ -21,6 +24,7 @@ function App() {
             <Route path='/' element={<Home />} />
             <Route path='/Our-Services' element={<OurServices />} />
             <Route path='/Ai-Careers' element={<AICareerQuiz />} />
+            <Route path='/ai-career-guidance' element={<AICareerGuidance />} />
           <Route path='/Edusens-Careers' element={<CareerExplorer />} />
             <Route path='/job-shadowing' element={<JobShadowing />} />
             <Route path='/contact-us' element={<ContactUsPage />} />
@@ -28,6 +32,8 @@ function App() {
             <Route path="/career/:slug" element={<CareerExplorer />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/job-shadowing-coming-soon" element={<ComingSoon />} />
+            <Route path="/ai-career-guidance-coming-soon" element={<AICareerGuidanceComingSoon />} />
+            <Route path="/payment" element={<PaymentPage />} />
           </Routes>
         </div>
         <Footer />

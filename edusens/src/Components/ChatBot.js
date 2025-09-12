@@ -11,7 +11,7 @@ const ChatBot = () => {
   const intents = {
     greeting: {
       patterns: ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'greetings', 'howdy'],
-      response: "Hi 👋 Welcome to EduSens Africa! I'm your virtual assistant, here to help you explore careers, education programs, and real-world job experiences. What would you like to know about today?"
+      response: "Hi 👋 Welcome to EduSens Africa! I'm your virtual assistant, here to help you explore careers, education programs, and real-world job experiences. What would you like to know about today? For more information contact us via email: info@edusensafrica.com or via WhatsApp: +254790966319"
     },
     services: {
       patterns: ['what services do you offer', 'tell me about your services', 'what do you do', 'services', 'offerings', 'what can you help with'],
@@ -39,7 +39,7 @@ const ChatBot = () => {
     },
     contact: {
       patterns: ['how do i contact you', 'contact info', 'email', 'whatsapp', 'phone number', 'reach out'],
-      response: "You can reach us at:\n📧 Email: info@edusensafrica.com\n\n📲 WhatsApp: +254790966319"
+      response: "For more information contact us via email: info@edusensafrica.com or via WhatsApp: +254790966319"
     },
     socialMedia: {
       patterns: ['social media', 'facebook', 'twitter', 'youtube', 'x', 'follow', 'social platforms'],
@@ -71,7 +71,7 @@ const ChatBot = () => {
     },
     closing: {
       patterns: ['thanks', 'goodbye', 'end chat', 'bye', 'see you', 'thank you'],
-      response: "Thanks for chatting with EduSens Africa today. Don't forget to follow us on YouTube, Facebook, and X for updates. Wishing you success on your career journey 🚀 Come back anytime for more guidance!"
+      response: "Thanks for chatting with EduSens Africa today. For more information contact us via email: info@edusensafrica.com or via WhatsApp: +254790966319. Don't forget to follow us on YouTube, Facebook, and X for updates. Wishing you success on your career journey 🚀 Come back anytime for more guidance!"
     }
   };
 
@@ -105,15 +105,20 @@ const ChatBot = () => {
   const findIntent = (text) => {
     const lowercaseText = text.toLowerCase();
     
+    // Log to debug
+    console.log('Searching for intent for:', lowercaseText);
+    
     for (const [intent, data] of Object.entries(intents)) {
       for (const pattern of data.patterns) {
         if (lowercaseText.includes(pattern)) {
+          console.log('Found intent:', intent, 'with pattern:', pattern);
           return intent;
         }
       }
     }
     
     // Default response if no intent is matched
+    console.log('No intent found, returning unknown');
     return 'unknown';
   };
 
@@ -132,10 +137,12 @@ const ChatBot = () => {
     // Prepare bot response
     let botResponse;
     if (intent === 'unknown') {
-      botResponse = "I'm not sure I understand. Could you rephrase that or ask about our services, career guidance, education programs, or job shadowing?";
+      botResponse = "I'm not sure I understand. Could you rephrase that or ask about our services, career guidance, education programs, or job shadowing? For more information contact us via email: info@edusensafrica.com or via WhatsApp: +254790966319";
     } else {
       botResponse = intents[intent].response;
     }
+    
+    console.log('Intent:', intent, 'Response:', botResponse);
     
     // Add slight delay to bot response for natural feel
     setTimeout(() => {
