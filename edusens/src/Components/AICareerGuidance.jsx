@@ -6,6 +6,10 @@ const AICareerGuidance = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [email, setEmail] = useState('');
   const [notified, setNotified] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
+  const [showComingSoon, setShowComingSoon] = useState(false);
+  const [tellMeEmail, setTellMeEmail] = useState('');
+  const [tellMeNotified, setTellMeNotified] = useState(false);
 
   useEffect(() => {
     // Trigger animation after component mounts
@@ -34,6 +38,31 @@ const AICareerGuidance = () => {
     // Hide notification success message after 3 seconds
     setTimeout(() => {
       setNotified(false);
+    }, 3000);
+  };
+
+  const handleLearnMore = () => {
+    setShowDetails(true);
+  };
+
+  const handleTellMeAboutYou = () => {
+    setShowComingSoon(true);
+  };
+
+  const closeComingSoon = () => {
+    setShowComingSoon(false);
+  };
+
+  const handleTellMeSubmit = (e) => {
+    e.preventDefault();
+    // In a real application, you would send this email to your backend
+    console.log('Tell Me About You notification email:', tellMeEmail);
+    setTellMeNotified(true);
+    setTellMeEmail('');
+    
+    // Hide notification success message after 3 seconds
+    setTimeout(() => {
+      setTellMeNotified(false);
     }, 3000);
   };
 
@@ -77,6 +106,44 @@ const AICareerGuidance = () => {
             Our AI career guidance system is currently in development. We're working hard to bring
             you the most advanced career advisory tools powered by artificial intelligence.
           </p>
+          
+          {!showDetails && (
+            <button className="learn-more-button" onClick={handleLearnMore}>
+              Learn More
+            </button>
+          )}
+          
+          {showDetails && (
+            <div className="detailed-info">
+              <h3>How AI Guides Your Career Journey</h3>
+              <p>
+                Our AI-powered system analyzes your skills, interests, and career aspirations to provide
+                personalized guidance. We use advanced natural language processing and machine learning
+                algorithms to understand your unique profile and match it with industry trends and
+                requirements.
+              </p>
+              
+              <div className="info-section">
+                <h4><i className="fas fa-lightbulb"></i> What makes our AI guidance unique?</h4>
+                <ul>
+                  <li>Personalized recommendations based on your specific profile</li>
+                  <li>Real-time industry data integration for up-to-date guidance</li>
+                  <li>Skill gap analysis with tailored learning resources</li>
+                  <li>Career trajectory simulation to visualize potential paths</li>
+                </ul>
+              </div>
+              
+              <div className="user-interaction">
+                <p>Want to see how our AI guidance works for you?</p>
+                <button 
+                  className="tell-me-button" 
+                  onClick={handleTellMeAboutYou}
+                >
+                  Tell me a bit about you – anything!
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         <button className="explore-button" onClick={handleExplore}>
@@ -114,6 +181,59 @@ const AICareerGuidance = () => {
               </button>
             </form>
           )}
+        </div>
+      </div>
+      
+      {/* AI Career Guidance Coming Soon Popup */}
+      <div className={`coming-soon-popup tell-me-popup ${showComingSoon ? 'show' : ''}`}>
+        <div className="popup-content">
+          <button className="popup-close" onClick={closeComingSoon}>
+            <i className="fas fa-times"></i>
+          </button>
+          <div className="ai-popup-icon">
+            <i className="fas fa-robot"></i>
+          </div>
+          <h2>AI Career Guidance Coming Soon</h2>
+          <p>
+            Our AI career advisor is currently learning and training to provide you with
+            the most accurate and personalized career guidance. We'll notify you as soon
+            as this feature becomes available.
+          </p>
+          
+          {tellMeNotified ? (
+            <div className="success-message">
+              <i className="fas fa-check-circle"></i> Thank you! We'll notify you when our AI career advisor is ready.
+            </div>
+          ) : (
+            <form className="notify-form" onSubmit={handleTellMeSubmit}>
+              <input
+                type="email"
+                className="notify-input"
+                placeholder="Your email address"
+                value={tellMeEmail}
+                onChange={(e) => setTellMeEmail(e.target.value)}
+                required
+              />
+              <button type="submit" className="notify-button">
+                Notify Me
+              </button>
+            </form>
+          )}
+          
+          <div className="ai-features">
+            <div className="ai-feature">
+              <i className="fas fa-comments"></i>
+              <span>Conversational AI</span>
+            </div>
+            <div className="ai-feature">
+              <i className="fas fa-user-graduate"></i>
+              <span>Personalized Advice</span>
+            </div>
+            <div className="ai-feature">
+              <i className="fas fa-industry"></i>
+              <span>Industry Insights</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
