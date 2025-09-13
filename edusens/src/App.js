@@ -11,6 +11,7 @@ import AICareerQuiz from './Components/AICareerQuiz';
 import JobShadowing from './Components/JobShadowing';
 import ComingSoon from './Components/ComingSoon';
 import PaymentPage from './Components/PaymentPage';
+import AIComingSoon from './Components/AIComingSoon';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/job-shadowing-coming-soon" element={<ComingSoon />} />
             <Route path="/payment" element={<PaymentPage />} />
+            <Route path="/ai-coming-soon" element={<AIComingSoon />} />
           </Routes>
         </div>
         <Footer />

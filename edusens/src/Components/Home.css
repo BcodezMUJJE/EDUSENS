@@ -29,16 +29,113 @@ body {
 
 /* Hero Section */
 .hero-section {
+  position: relative;
+  width: 100%;
+  height: 100vh; /* Changed from 80vh to 100vh to fill the entire viewport height */
   display: flex;
+  justify-content: center;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 60px;
-  padding: 40px 0;
+  overflow: hidden;
+  margin: 0; /* Remove any margin */
+  padding: 0; /* Remove any padding */
+}
+
+.slideshow-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw; /* Use viewport width to ensure full width */
+  height: 140vh; /* Use viewport height to ensure full height */
+  z-index: 1;
+  margin: 0; /* Remove any margin */
+  padding: 0; /* Remove any padding */
+  max-width: none; /* Override any max-width */
+}
+
+.slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 1.5s ease-in-out;
+}
+
+.slide.active {
+  opacity: 1;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay to make text more readable */
+  z-index: 2;
 }
 
 .hero-content {
   flex: 1;
   padding-right: 40px;
+}
+
+.hero-content.centered {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  max-width: 800px;
+  padding: 2rem;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.text-container {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero-content h1 {
+  font-size: 4rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  line-height: 1.1;
+  color: #2196F3; /* Make all heading text blue */
+}
+
+.emphasized-word {
+  color: var(--white); /* Make the emphasized word white */
+  font-weight: 800;
+  text-transform: uppercase;
+  display: inline-block;
+  position: relative;
+}
+
+.emphasized-word::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(to right, #ffffff, #e0e0e0); /* White gradient for underline */
+  border-radius: 2px;
+}
+
+.hero-content .subtitle {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  font-weight: 400;
+}
+
+.hero-content .lead {
+  font-size: 2rem;
+  font-weight: 500;
 }
 
 .hero-image {
@@ -349,7 +446,8 @@ h1 {
   .hero-section {
     flex-direction: column;
     text-align: center;
-    padding: 20px 0;
+    padding: 0; /* Remove padding */
+    height: 100vh; /* Fill the entire viewport height */
   }
   
   .hero-content {
@@ -369,6 +467,18 @@ h1 {
   .step {
     width: 80%;
     margin-bottom: 60px;
+  }
+  
+  .hero-content h1 {
+    font-size: 2.5rem;
+  }
+  
+  .hero-content .subtitle {
+    font-size: 1.2rem;
+  }
+  
+  .hero-content .lead {
+    font-size: 1.5rem;
   }
 }
 

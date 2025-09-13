@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './AICareerGuidance.css';
+import { useNavigate } from 'react-router-dom';
 
 const AICareerGuidance = () => {
   const [animate, setAnimate] = useState(false);
@@ -10,6 +11,7 @@ const AICareerGuidance = () => {
   const [showComingSoonPopup, setShowComingSoonPopup] = useState(false);
   const [tellMeEmail, setTellMeEmail] = useState('');
   const [tellMeNotified, setTellMeNotified] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Trigger animation after component mounts
@@ -46,7 +48,8 @@ const AICareerGuidance = () => {
   };
   
   const handleTellMeAboutYou = () => {
-    setShowComingSoonPopup(true);
+    // Navigate to the AIComingSoon page instead of showing a popup
+    navigate('/ai-coming-soon');
   };
   
   const closeComingSoonPopup = () => {

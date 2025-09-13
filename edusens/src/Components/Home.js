@@ -4,7 +4,9 @@ import './Home.css';
 // eslint-disable-next-line
 import { FaRobot, FaChartLine, FaUserTie, FaPlay, FaPause } from 'react-icons/fa';
 import { GiMagnifyingGlass } from 'react-icons/gi';
-import heroImage from "../Assets/GRAD.jpeg";
+import s1 from "../Assets/s1.jpg";
+import s2 from "../Assets/s2.jpg";
+import s3 from "../Assets/s3.jpg";
 import introVideo from '../Assets/eddd.mp4';
 
 // Video component
@@ -59,6 +61,18 @@ const VideoPlayer = () => {
 };
 
 function Home() {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const slides = [s1, s2, s3];
+  
+  // Slideshow effect
+  useEffect(() => {
+    const slideInterval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 5000); // Change slide every 5 seconds
+    
+    return () => clearInterval(slideInterval);
+  }, [slides.length]);
+  
   // Example backend call (non-disruptive)
   useEffect(() => {
     let mounted = true;
@@ -75,17 +89,26 @@ function Home() {
     });
     return () => { mounted = false; };
   }, []);
+  
   return (
     <div className="home-container">
-      {/* Hero Section */}
+      {/* Hero Section with Slideshow */}
       <section className="hero-section">
-        <div className="hero-content">
-          <h1>Future you <br />is calling</h1>
-          <p className="subtitle">but like, who even <em>are</em> they ?</p>
-          <p className="lead">Let's help you figure it out !</p>
+        <div className="slideshow-container">
+          {slides.map((slide, index) => (
+            <div
+              key={index}
+              className={`slide ${index === currentSlide ? 'active' : ''}`}
+              style={{ backgroundImage: `url(${slide})` }}
+            ></div>
+          ))}
+          <div className="overlay"></div>
         </div>
-        <div className="hero-image">
-          <img src={heroImage} alt="Future calling" />
+        
+        <div className="hero-content centered">
+          <div className="text-container">
+            <h1>Journey To Your Future <span className="emphasized-word">Starts</span> Now</h1>
+          </div>
         </div>
       </section>
 
@@ -94,7 +117,7 @@ function Home() {
 
       {/* Steps Section */}
       <section className="steps-section">
-        <h2>Don't just choose a career, EduSens helps you<br />choose your purpose in 3 simple steps !</h2>
+        <h2>Don't just choose a career, EduSens helps you<br />choose your purpose in 3 simple steps!</h2>
         <br /> <br /> <br />
         <div className="steps-container">
           <div className="step">
