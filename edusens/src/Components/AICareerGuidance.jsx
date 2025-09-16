@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './AICareerGuidance.css';
 import { useNavigate } from 'react-router-dom';
+import AuthModal from './AuthModal';
+import { isAuthenticated } from '../utils/auth';
 
 const AICareerGuidance = () => {
   const [animate, setAnimate] = useState(false);
@@ -11,6 +13,9 @@ const AICareerGuidance = () => {
   const [showComingSoonPopup, setShowComingSoonPopup] = useState(false);
   const [tellMeEmail, setTellMeEmail] = useState('');
   const [tellMeNotified, setTellMeNotified] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [pendingAction, setPendingAction] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,8 +27,25 @@ const AICareerGuidance = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    // Track scroll position
+    const handleScroll = () => {
+      setScrollPosition(window.scrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const handleExplore = () => {
-    setShowPopup(true);
+    // Check if user is authenticated
+    if (!isAuthenticated()) {
+      // Save the intended action
+      setPendingAction('explore');
+      setShowAuthModal(true);
+    } else {
+      setShowPopup(true);
+    }
   };
 
   const closePopup = () => {
@@ -36,33 +58,66 @@ const AICareerGuidance = () => {
     console.log('Notify email:', email);
     setNotified(true);
     setEmail('');
-    
+
     // Hide notification success message after 3 seconds
     setTimeout(() => {
       setNotified(false);
     }, 3000);
   };
-  
+
   const handleLearnMore = () => {
-    setShowDetails(true);
+    // Check if user is authenticated
+    if (!isAuthenticated()) {
+      // Save the scroll position and intended action
+      setPendingAction('learnMore');
+      setShowAuthModal(true);
+    } else {
+      setShowDetails(true);
+    }
   };
-  
+
   const handleTellMeAboutYou = () => {
-    // Navigate to the AIComingSoon page instead of showing a popup
-    navigate('/ai-coming-soon');
+    // Check if user is authenticated
+    if (!isAuthenticated()) {
+      // Save the intended action
+      setPendingAction('tellMeAboutYou');
+      setShowAuthModal(true);
+    } else {
+      // Navigate to the AIComingSoon page
+      navigate('/ai-coming-soon');
+    }
   };
-  
+
+  const handleAuthSuccess = () => {
+    setShowAuthModal(false);
+
+    // Resume the action that was attempted before authentication
+    if (pendingAction === 'learnMore') {
+      setShowDetails(true);
+    } else if (pendingAction === 'tellMeAboutYou') {
+      navigate('/ai-coming-soon');
+    } else if (pendingAction === 'explore') {
+      setShowPopup(true);
+    }
+
+    // Reset pending action
+    setPendingAction(null);
+
+    // Restore scroll position
+    window.scrollTo(0, scrollPosition);
+  };
+
   const closeComingSoonPopup = () => {
     setShowComingSoonPopup(false);
   };
-  
+
   const handleTellMeSubmit = (e) => {
     e.preventDefault();
     // In a real application, you would send this email to your backend
     console.log('Tell Me About You notification email:', tellMeEmail);
     setTellMeNotified(true);
     setTellMeEmail('');
-    
+
     // Hide notification success message after 3 seconds
     setTimeout(() => {
       setTellMeNotified(false);
@@ -109,13 +164,13 @@ const AICareerGuidance = () => {
             Our AI career guidance system is currently in development. We're working hard to bring
             you the most advanced career advisory tools powered by artificial intelligence.
           </p>
-          
+
           {!showDetails && (
             <button className="learn-more-button" onClick={handleLearnMore}>
               Learn More
             </button>
           )}
-          
+
           {showDetails && (
             <div className="detailed-info">
               <h3>How AI Guides Your Career Journey</h3>
@@ -125,7 +180,7 @@ const AICareerGuidance = () => {
                 algorithms to understand your unique profile and match it with industry trends and
                 requirements.
               </p>
-              
+
               <div className="info-section">
                 <h4><i className="fas fa-lightbulb"></i> What makes our AI guidance unique?</h4>
                 <ul>
@@ -135,11 +190,11 @@ const AICareerGuidance = () => {
                   <li>Career trajectory simulation to visualize potential paths</li>
                 </ul>
               </div>
-              
+
               <div className="user-interaction">
                 <p>Want to see how our AI guidance works for you?</p>
-                <button 
-                  className="tell-me-button" 
+                <button
+                  className="tell-me-button"
                   onClick={handleTellMeAboutYou}
                 >
                   Tell me a bit about you – anything!
@@ -164,7 +219,7 @@ const AICareerGuidance = () => {
             We're working hard to bring you the most advanced AI-powered career guidance platform.
             Be the first to know when we launch!
           </p>
-          
+
           {notified ? (
             <div style={{ color: '#2ecc71', marginBottom: '20px' }}>
               <i className="fas fa-check-circle"></i> Thank you! We'll notify you when we launch.
@@ -186,7 +241,7 @@ const AICareerGuidance = () => {
           )}
         </div>
       </div>
-      
+
       {/* AI Career Guidance Coming Soon Popup */}
       <div className={`coming-soon-popup ai-coming-soon-popup ${showComingSoonPopup ? 'show' : ''}`}>
         <div className="popup-content">
@@ -202,7 +257,7 @@ const AICareerGuidance = () => {
             the most accurate and personalized career guidance. We'll notify you as soon
             as this feature becomes available.
           </p>
-          
+
           {tellMeNotified ? (
             <div className="notify-success">
               <i className="fas fa-check-circle"></i> Thank you! We'll notify you when our AI career advisor is ready.
@@ -222,7 +277,7 @@ const AICareerGuidance = () => {
               </button>
             </form>
           )}
-          
+
           <div className="ai-features">
             <div className="ai-feature">
               <i className="fas fa-comments"></i>
@@ -239,6 +294,13 @@ const AICareerGuidance = () => {
           </div>
         </div>
       </div>
+
+      {/* Auth Modal */}
+      <AuthModal
+        show={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onAuthSuccess={handleAuthSuccess}
+      />
     </div>
   );
 };
