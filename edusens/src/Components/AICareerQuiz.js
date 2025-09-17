@@ -26,7 +26,7 @@ const AICareerQuiz = () => {
         </div>
         <div className="button-section">
           <button className="cta-button" onClick={handleTellMeAboutYou}>
-            Tell me a bit about you - anything!
+            Get Started
           </button>
         </div>
       </div>

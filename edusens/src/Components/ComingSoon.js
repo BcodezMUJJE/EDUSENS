@@ -1,13 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './ComingSoon.css';
-import Logo from '../Assets/Logoo.png';
 
 const ComingSoon = () => {
   return (
     <div className="coming-soon-container">
       <div className="coming-soon-content">
-        <img src={Logo} alt="EduSens Logo" className="coming-soon-logo" />
         <h1 className="coming-soon-title">Coming Soon!</h1>
         <p className="coming-soon-message">
           Our Job Shadowing feature is currently under development.

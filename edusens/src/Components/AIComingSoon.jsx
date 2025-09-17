@@ -31,7 +31,7 @@ const AIComingSoon = () => {
           <div className="ai-icon">
             <i className="fas fa-robot"></i>
           </div>
-          <h1>Service Not Available – Coming Soon</h1>
+          <h1>Coming Soon</h1>
         </div>
 
         <div className="ai-coming-soon-content">

@@ -69,9 +69,13 @@ const ChatBot = () => {
       patterns: ['is it free', 'cost', 'fees', 'pricing', 'how much', 'price'],
       response: "Our programs have affordable fees depending on the service."
     },
+    contactUs: {
+      patterns: ['how do i reachout', 'contact info', 'contact information', 'contacts', 'phone number', 'contact details', 'email', 'whatsapp'],
+      response: "Thanks for chatting with EduSens Africa today. For more information contact us via email: info@edusensafrica.com or via WhatsApp: +254790966319."
+    },
     closing: {
       patterns: ['thanks', 'goodbye', 'end chat', 'bye', 'see you', 'thank you'],
-      response: "Thanks for chatting with EduSens Africa today. For more information contact us via email: info@edusensafrica.com or via WhatsApp: +254790966319. Don't forget to follow us on YouTube, Facebook, and X for updates. Wishing you success on your career journey 🚀 Come back anytime for more guidance!"
+      response: "Don't forget to follow us on YouTube, Facebook, and X for updates. Wishing you success on your career journey 🚀 Come back anytime for more guidance!"
     }
   };
 

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './AuthPage.css';
-import logoImage from '../Assets/Logoo.png';
 
 // Social media icons
 import googleIcon from '../Assets/google-icon.svg';
@@ -124,10 +123,7 @@ const AuthPage = () => {
       <div className="auth-page">
         <div className="auth-container">
           <div className="auth-header">
-            <Link to="/" className="logo-link">
-              <img src={logoImage} alt="EduSens Africa Logo" className="auth-logo" />
-            </Link>
-            <h1>{isLogin ? 'Log in to your account' : 'Create your account'}</h1>
+            <h1>{isLogin ? 'Log in to your Edusens Africa account' : 'Create account'}</h1>
             <p>
               {isLogin 
                 ? 'Welcome back! Please enter your details.' 
