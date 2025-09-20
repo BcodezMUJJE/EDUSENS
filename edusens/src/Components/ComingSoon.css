@@ -64,6 +64,82 @@
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
+/* Add these styles to your existing CSS file */
+
+.notify-me-container {
+  margin: 30px 0;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.notify-me-container h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  color: #fff;
+}
+
+.notify-form .form-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.notify-form input {
+  flex: 1;
+  padding: 12px 15px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.notify-form input.error-input {
+  border: 1px solid #ff6b6b;
+}
+
+.notify-form button {
+  padding: 12px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s;
+  white-space: nowrap;
+}
+
+.notify-form button:hover {
+  background-color: #45a049;
+}
+
+.notify-form button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: #ff6b6b;
+  margin: 5px 0;
+  font-size: 0.9rem;
+}
+
+.success-message {
+  background-color: rgba(76, 175, 80, 0.2);
+  border-left: 4px solid #4CAF50;
+  padding: 10px 15px;
+  border-radius: 4px;
+}
+
+.success-message p {
+  margin: 0;
+  color: #fff;
+}
+
 @media (max-width: 768px) {
   .coming-soon-content {
     padding: 2rem;
@@ -75,5 +151,15 @@
   
   .coming-soon-message {
     font-size: 1rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .notify-form .form-group {
+    flex-direction: column;
+  }
+  
+  .notify-form button {
+    width: 100%;
   }
 }
