@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 import Logo from '../Assets/Logoo.png';
 
@@ -8,6 +8,25 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const location = useLocation();
+  const navigate = useNavigate();
+  
+  // TEMPORARY: Mock auth state until Firebase is integrated
+  const [currentUser, setCurrentUser] = useState(null);
+  
+  // For testing UI: Uncomment this line to simulate a logged-in user
+  // const currentUser = { displayName: 'Test User', email: 'test@example.com' };
+  
+  // Mock logout function until Firebase is integrated
+  const handleLogout = async () => {
+    try {
+      // await logout(); - COMMENTED OUT
+      setCurrentUser(null); // Mock logout by clearing user
+      navigate('/');
+      setIsMenuOpen(false);
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
   
   // Track scroll position to add shadow when scrolled
   useEffect(() => {
@@ -122,28 +141,50 @@ const Navbar = () => {
                 CONTACT
               </Link>
               
-              {/* Auth button (inside mobile menu for small screens) */}
+              {/* Auth section inside mobile menu for small screens */}
               {screenWidth <= 767 && (
                 <div className="auth-button-container">
-                  <Link to="/auth" className="auth-button" onClick={handleLinkClick}>
+                  {currentUser ? (
+                    <>
+                      <div className="user-info">
+                        <span className="username">{currentUser.displayName || currentUser.email || 'User'}</span>
+                      </div>
+                      <button onClick={handleLogout} className="auth-button logout-button">
+                        <span className="auth-button-text">Log Out</span>
+                      </button>
+                    </>
+                  ) : (
+                    <Link to="/auth" className="auth-button" onClick={handleLinkClick}>
+                      <span className="auth-button-text">Sign Up / Log In</span>
+                      <svg className="auth-button-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </Link>
+                  )}
+                </div>
+              )}
+            </div>
+            
+            {/* Auth section outside mobile menu for larger screens */}
+            {screenWidth > 767 && (
+              <div className="auth-button-container">
+                {currentUser ? (
+                  <>
+                    <div className="user-info">
+                      <span className="username">{currentUser.displayName || currentUser.email || 'User'}</span>
+                    </div>
+                    <button onClick={handleLogout} className="auth-button logout-button">
+                      <span className="auth-button-text">Log Out</span>
+                    </button>
+                  </>
+                ) : (
+                  <Link to="/auth" className="auth-button">
                     <span className="auth-button-text">Sign Up / Log In</span>
                     <svg className="auth-button-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   </Link>
-                </div>
-              )}
-            </div>
-            
-            {/* Auth button (outside mobile menu for larger screens) */}
-            {screenWidth > 767 && (
-              <div className="auth-button-container">
-                <Link to="/auth" className="auth-button">
-                  <span className="auth-button-text">Sign Up / Log In</span>
-                  <svg className="auth-button-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </Link>
+                )}
               </div>
             )}
           </div>

@@ -105,6 +105,29 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
+/* New Link Styles */
+.footer-links {
+  text-align: center;
+  margin: 20px 0;
+}
+
+.footer-links a {
+  color: #8a8a8a;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.link-divider {
+  margin: 0 10px;
+  color: #8a8a8a;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .footer-main {
