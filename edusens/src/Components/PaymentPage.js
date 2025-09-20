@@ -67,15 +67,15 @@ const PaymentPage = () => {
           <h2><i className="fas fa-shopping-cart"></i> Order Summary</h2>
           <div className="course-info">
             <div className="course-details">
-              <h3>{career.title} Career Course</h3>
+              <h3>{career.title} Career Guidance Course</h3>
               <span className="course-badge">3-Week Program</span>
             </div>
-            <p className="course-price">KES 5,000</p>
+            <p className="course-price">KES 1,500</p>
           </div>
           <div className="summary-details">
             <div className="summary-row">
               <span>Course Fee</span>
-              <span>KES 5,000</span>
+              <span>KES 1,500</span>
             </div>
             <div className="summary-row">
               <span>Discount</span>
@@ -83,7 +83,7 @@ const PaymentPage = () => {
             </div>
             <div className="summary-row total">
               <span>Total</span>
-              <span>KES 5,000</span>
+              <span>KES 1,500</span>
             </div>
           </div>
         </div>

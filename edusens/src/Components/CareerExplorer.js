@@ -6,6 +6,7 @@ const CareerExplorer = () => {
   const [view, setView] = useState('list');
   // eslint-disable-next-line
   const [careerCode, setCareerCode] = useState('');
+  // eslint-disable-next-line
   const [activeTab, setActiveTab] = useState('curriculum');
   const [selectedCareer, setSelectedCareer] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -441,6 +442,7 @@ const CareerExplorer = () => {
           <div className="divider"></div>
 
           <main className="detail-content">
+            {/* Education Tabs 
             <section className="career-education">
               <div className="tabs">
                 <button 
@@ -489,7 +491,7 @@ const CareerExplorer = () => {
                   </div>
                 )}
               </div>
-            </section>
+            </section> */}
 
             <div className="get-started-section">
               <button className="get-started-btn" onClick={handleGetStarted}>

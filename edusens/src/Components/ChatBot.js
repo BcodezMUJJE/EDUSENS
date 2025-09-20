@@ -1,182 +1,168 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './ChatBot.css';
 
+// Intent patterns and their responses
+const intents = {
+  greeting: {
+    patterns: ["hello", "hi", "hey", "good morning", "good afternoon", "good evening"],
+    response: () => {
+      const hour = new Date().getHours();
+      let greetingTime = "Hello";
+      if (hour < 12) greetingTime = "Good morning";
+      else if (hour < 18) greetingTime = "Good afternoon";
+      else greetingTime = "Good evening";
+      return `👋 ${greetingTime}! Welcome to EduSens Africa. How can I assist you today?`;
+    }
+  },
+  services: {
+    patterns: ["services", "what do you offer", "programs", "solutions", "offerings"],
+    response: "🌍 EduSens Africa provides three main services:\n1️⃣ AI Career Guidance (Across Africa)\n2️⃣ Career Education Programs (Across Africa)\n3️⃣ Job Shadowing (Kenya only)"
+  },
+  aiCareerGuidance: {
+    patterns: ["career guidance", "ai career guidance", "career quiz", "career assessment"],
+    response: "🎯 Our AI Career Guidance helps you discover careers matching your strengths and interests. Would you like me to show you how to start?"
+  },
+  careerEducation: {
+    patterns: ["career education", "career programs", "education programs", "career training"],
+    response: "📚 Our Career Education Program is a 3-week course covering personal development, educational paths, job opportunities, and insights from professionals."
+  },
+  jobShadowing: {
+    patterns: ["job shadowing", "shadow program", "career exposure", "work experience"],
+    response: "💼 Our Job Shadowing program offers a 3-day experience with professionals in your field—virtually or physically. Available in Kenya 🇰🇪 only."
+  },
+  contactUs: {
+    patterns: ["how do i reach out", "how do i reachout", "contact info", "contact information", "contacts", "phone number", "contact details", "email", "whatsapp"],
+    response: "📩 Thanks for chatting with EduSens Africa today. Contact us at info@edusensafrica.com or WhatsApp: +254790966319."
+  },
+  socialMedia: {
+    patterns: ["social media", "facebook", "twitter", "youtube", "x", "follow"],
+    response: "📲 Follow us:\nYouTube: EduSens Africa\nFacebook: EduSens Africa\nX (Twitter): @edusensafrica"
+  },
+  eligibility: {
+    patterns: ["who can join", "eligibility", "requirements"],
+    response: "✅ AI Career Guidance & Career Education → Open to all in Africa.\n✅ Job Shadowing → Kenya only."
+  },
+  programTiming: {
+    patterns: ["when are your programs", "schedule", "program dates", "timing"],
+    response: "📅 Programs run during school holidays: April, August, Nov–Dec."
+  },
+  duration: {
+    patterns: ["how long are the programs", "duration", "length"],
+    response: "⏳ Career Education → 3 weeks\n⏳ Job Shadowing → 3 days"
+  },
+  accessMethod: {
+    patterns: ["are your services online", "virtual or physical", "how to access"],
+    response: "💻 Services are online via mobile, laptop, or PC. Job Shadowing can be virtual or physical (Kenya only)."
+  },
+  registration: {
+    patterns: ["how do i register", "sign up", "join program", "enroll"],
+    response: "📝 Register via WhatsApp: +254790966319 or Email: info@edusensafrica.com"
+  },
+  fees: {
+    patterns: ["is it free", "cost", "fees", "pricing", "how much"],
+    response: "💵 Programs are affordable and vary by service. Contact us for details."
+  },
+  closing: {
+    patterns: ["thanks", "goodbye", "end chat", "bye", "see you"],
+    response: "🙏 Thank you for chatting with EduSens Africa. Follow us on YouTube, Facebook, and X. Wishing you success 🚀"
+  }
+};
+
+// Intent detection with regex + fallback
+const findIntent = (text) => {
+  const lowercaseText = text.toLowerCase();
+
+  for (const [intent, data] of Object.entries(intents)) {
+    for (const pattern of data.patterns) {
+      // Check for exact match
+      if (lowercaseText.includes(pattern)) {
+        return typeof data.response === "function" 
+          ? data.response() 
+          : data.response;
+      }
+      
+      // Try more flexible matching (split words and check if most are present)
+      const patternWords = pattern.split(' ');
+      if (patternWords.length > 1) {
+        let matchCount = 0;
+        patternWords.forEach(word => {
+          if (lowercaseText.includes(word) && word.length > 2) { // Only count words longer than 2 chars
+            matchCount++;
+          }
+        });
+        
+        // If most words match (at least 70%), consider it a match
+        if (matchCount >= Math.ceil(patternWords.length * 0.7)) {
+          return typeof data.response === "function" 
+            ? data.response() 
+            : data.response;
+        }
+      }
+    }
+  }
+
+  const fallbackResponses = [
+    "🤔 I didn't get that. Try asking about services, job shadowing, or contact info.",
+    "Can you rephrase? I can tell you about our services, education programs, or contacts.",
+    "Hmm... not sure I understood. Would you like info on our programs?",
+    "Sorry, I missed that. Maybe ask about registration, services, or fees?"
+  ];
+
+  return fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+};
+
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
   const messagesEndRef = useRef(null);
-  
-  // Intent patterns and their corresponding responses
-  const intents = {
-    greeting: {
-      patterns: ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'greetings', 'howdy'],
-      response: "Hi 👋 Welcome to EduSens Africa! I'm your virtual assistant, here to help you explore careers, education programs, and real-world job experiences. What would you like to know about today? For more information contact us via email: info@edusensafrica.com or via WhatsApp: +254790966319"
-    },
-    services: {
-      patterns: ['what services do you offer', 'tell me about your services', 'what do you do', 'services', 'offerings', 'what can you help with'],
-      response: "We currently offer three main services:\n1️⃣ AI Career Guidance (Available across Africa)\n2️⃣ Career Education Programs (Available across Africa)\n3️⃣ Job Shadowing (Currently in Kenya only)\nWhich one would you like to learn more about?"
-    },
-    aiCareerGuidance: {
-      patterns: ['tell me about ai career guidance', 'career guidance', 'career quiz', 'ai career guidance', 'guidance', 'career assessment'],
-      response: "Our AI Career Guidance helps you discover careers that align with your strengths, personality, and interests 🎯. You'll interact with our AI through an exciting quiz—the more you share, the better the feedback you get. Would you like me to show you how to get started?"
-    },
-    careerEducation: {
-      patterns: ['tell me about career education', 'career education', 'career programs', 'education programs', 'career training'],
-      response: "Our Career Education Program is a 3-week journey that begins with training on motivation, self-belief, and personal development before diving deep into your chosen career.\n\nYou'll explore:\n\n• Educational requirements\n\n• Institutions offering the program\n\n• Job opportunities & skills needed\n\n• Insights from real professionals, details of the job duties\n\n🗓 Runs during school holidays (April, August, November–December).\n📱💻 Accessible via phone, computer, or laptop with internet.\nParents can also sign up for progress updates as students hit milestones."
-    },
-    jobShadowing: {
-      patterns: ['tell me about job shadowing', 'job shadowing', 'shadowing program', 'work experience', 'professional shadowing'],
-      response: "Our Job Shadowing program offers a 3-day real-world experience with a qualified professional in your chosen field. You'll see what the career is really like—virtually or physically (depending on your preference and the profession).\n\n📍 Currently available in Kenya only, during school holidays, and must be booked in advance. Would you like me to share how to apply?"
-    },
-    support: {
-      patterns: ['i need help', 'support', 'contact', 'how can i reach you', 'assistance', 'customer support'],
-      response: "I can help you with:\n1️⃣ Service Information\n2️⃣ Program Registration\n3️⃣ Parent Updates\n4️⃣ Contact Support Team\n5️⃣ Social Media Links"
-    },
-    parentUpdates: {
-      patterns: ['how can parents track progress', 'parent updates', 'parents info', 'tracking progress', 'parent monitoring'],
-      response: "Parents can sign up alongside their children to receive updates on their child's progress and milestones 🎯. Would you like me to guide you on how to enroll for updates?"
-    },
-    contact: {
-      patterns: ['how do i contact you', 'contact info', 'email', 'whatsapp', 'phone number', 'reach out'],
-      response: "For more information contact us via email: info@edusensafrica.com or via WhatsApp: +254790966319"
-    },
-    socialMedia: {
-      patterns: ['social media', 'facebook', 'twitter', 'youtube', 'x', 'follow', 'social platforms'],
-      response: "Follow us for updates:\nYouTube: EduSens Africa\nFacebook: EduSens Africa\nX (Twitter): @edusensafrica"
-    },
-    eligibility: {
-      patterns: ['who can join', 'eligibility', 'who is this for', 'requirements to join'],
-      response: "Our AI Career Guidance and Career Education programs are open to all users across Africa. Job shadowing is currently available in Kenya 🇰🇪."
-    },
-    programTiming: {
-      patterns: ['when are your programs', 'schedule', 'when do they run', 'program dates', 'timing'],
-      response: "Our Career Education and Job Shadowing programs run during school holidays: April, August, and November–December."
-    },
-    duration: {
-      patterns: ['how long are the programs', 'duration', 'length of program', 'program length', 'time commitment'],
-      response: "Career Education → 3 weeks; Job Shadowing → 3 days"
-    },
-    accessMethod: {
-      patterns: ['are your services online', 'virtual or physical', 'how to access', 'online or offline', 'access method'],
-      response: "All our programs can be accessed online through mobile phone, computer, or laptop with an internet connection. Job Shadowing can be virtual or physical."
-    },
-    registration: {
-      patterns: ['how do i register', 'sign up', 'join program', 'registration process', 'enroll'],
-      response: "You can register by contacting us on WhatsApp: +254790966319 or email: info@edusensafrica.com"
-    },
-    fees: {
-      patterns: ['is it free', 'cost', 'fees', 'pricing', 'how much', 'price'],
-      response: "Our programs have affordable fees depending on the service."
-    },
-    contactUs: {
-      patterns: ['how do i reachout', 'contact info', 'contact information', 'contacts', 'phone number', 'contact details', 'email', 'whatsapp'],
-      response: "Thanks for chatting with EduSens Africa today. For more information contact us via email: info@edusensafrica.com or via WhatsApp: +254790966319."
-    },
-    closing: {
-      patterns: ['thanks', 'goodbye', 'end chat', 'bye', 'see you', 'thank you'],
-      response: "Don't forget to follow us on YouTube, Facebook, and X for updates. Wishing you success on your career journey 🚀 Come back anytime for more guidance!"
-    }
-  };
 
-  // Initial bot message when chat opens
+  // Initial bot message
   useEffect(() => {
     if (isOpen && messages.length === 0) {
-      setMessages([
-        { 
-          text: intents.greeting.response, 
-          sender: 'bot' 
-        }
-      ]);
+      setMessages([{ text: findIntent("hello"), sender: "bot" }]);
     }
   }, [isOpen, messages.length]);
 
-  // Auto-scroll to bottom of chat
+  // Auto-scroll
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
 
-  const toggleChat = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const handleInputChange = (e) => {
-    setUserInput(e.target.value);
-  };
-
-  const findIntent = (text) => {
-    const lowercaseText = text.toLowerCase();
-    
-    // Log to debug
-    console.log('Searching for intent for:', lowercaseText);
-    
-    for (const [intent, data] of Object.entries(intents)) {
-      for (const pattern of data.patterns) {
-        if (lowercaseText.includes(pattern)) {
-          console.log('Found intent:', intent, 'with pattern:', pattern);
-          return intent;
-        }
-      }
-    }
-    
-    // Default response if no intent is matched
-    console.log('No intent found, returning unknown');
-    return 'unknown';
-  };
-
   const handleSendMessage = (e) => {
     e.preventDefault();
-    
     if (!userInput.trim()) return;
-    
-    // Add user message to chat
-    const newMessages = [...messages, { text: userInput, sender: 'user' }];
+
+    const newMessages = [...messages, { text: userInput, sender: "user" }];
     setMessages(newMessages);
-    
-    // Process user input to find intent
-    const intent = findIntent(userInput);
-    
-    // Prepare bot response
-    let botResponse;
-    if (intent === 'unknown') {
-      botResponse = "I'm not sure I understand. Could you rephrase that or ask about our services, career guidance, education programs, or job shadowing? For more information contact us via email: info@edusensafrica.com or via WhatsApp: +254790966319";
-    } else {
-      botResponse = intents[intent].response;
-    }
-    
-    console.log('Intent:', intent, 'Response:', botResponse);
-    
-    // Add slight delay to bot response for natural feel
+
     setTimeout(() => {
-      setMessages([...newMessages, { text: botResponse, sender: 'bot' }]);
+      const botResponse = findIntent(userInput);
+      setMessages([...newMessages, { text: botResponse, sender: "bot" }]);
     }, 600);
-    
+
     setUserInput('');
   };
 
   return (
     <div className="chatbot-container">
       {!isOpen ? (
-        <button className="chat-toggle" onClick={toggleChat}>
-          <span className="chat-icon">💬</span>
-          <span>Chat with EduBot</span>
+        <button className="chat-toggle" onClick={() => setIsOpen(true)}>
+          💬 Chat with EduBot
         </button>
       ) : (
         <div className="chatbot-window">
           <div className="chatbot-header">
             <h3>EduBot</h3>
-            <button className="close-btn" onClick={toggleChat}>×</button>
+            <button className="close-btn" onClick={() => setIsOpen(false)}>×</button>
           </div>
-          
+
           <div className="chatbot-messages">
             {messages.map((message, index) => (
-              <div 
-                key={index} 
-                className={`message ${message.sender === 'bot' ? 'bot-message' : 'user-message'}`}
-              >
-                {message.sender === 'bot' && <div className="bot-avatar">🤖</div>}
+              <div key={index} className={`message ${message.sender}`}>
+                {message.sender === "bot" && <div className="bot-avatar">🤖</div>}
                 <div className="message-bubble">
                   {message.text.split('\n').map((line, i) => (
                     <React.Fragment key={i}>
@@ -189,20 +175,15 @@ const ChatBot = () => {
             ))}
             <div ref={messagesEndRef} />
           </div>
-          
+
           <form className="chatbot-input" onSubmit={handleSendMessage}>
             <input
               type="text"
               value={userInput}
-              onChange={handleInputChange}
+              onChange={(e) => setUserInput(e.target.value)}
               placeholder="Type your message..."
-              aria-label="Message input"
             />
-            <button type="submit" aria-label="Send message">
-              <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
-              </svg>
-            </button>
+            <button type="submit">➤</button>
           </form>
         </div>
       )}
