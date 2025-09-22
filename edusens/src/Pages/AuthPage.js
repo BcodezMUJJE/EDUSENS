@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
+import AuthDebug from '../Components/AuthDebug';
 import './AuthPage.css';
 
 // Social media icons
@@ -17,6 +19,17 @@ const AuthPage = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
+  
+  // Access the AuthContext
+  const { login, signup, simulateLogin, currentUser } = useContext(AuthContext);
+  
+  // If user is already logged in, redirect to home page
+  useEffect(() => {
+    if (currentUser) {
+      console.log("AuthPage - User already logged in, redirecting to home");
+      navigate('/');
+    }
+  }, [currentUser, navigate]);
 
   // Clear form state when switching between login/signup modes
   useEffect(() => {
@@ -72,27 +85,33 @@ const AuthPage = () => {
     }
 
     setLoading(true);
+    setError('');
 
     try {
-      // This would be replaced with actual authentication API calls
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      let result;
       
-      // Simulate a successful login/signup
-      console.log('Authentication successful');
-      console.log({
-        email,
-        password,
-        mode: isLogin ? 'login' : 'signup'
-      });
+      if (isLogin) {
+        console.log("AuthPage - Logging in user:", email);
+        result = await login(email, password);
+      } else {
+        console.log("AuthPage - Signing up user:", email);
+        // Use the full name if you have a field for it, or extract from email
+        const fullName = email.split('@')[0]; // Simple fallback if no full name field
+        result = await signup(fullName, email, password);
+      }
       
-      // Show success message
-      setSuccess(true);
-      
-      // Redirect to home page after successful authentication
-      setTimeout(() => {
-        navigate('/');
-      }, 2000);
-      
+      if (result.success) {
+        console.log("AuthPage - Authentication successful");
+        setSuccess(true);
+        
+        // Redirect to home page after successful authentication
+        setTimeout(() => {
+          navigate('/');
+        }, 1500);
+      } else {
+        setError(result.message || 'Authentication failed. Please try again.');
+        console.error('Authentication error:', result.message);
+      }
     } catch (err) {
       setError('Authentication failed. Please try again.');
       console.error('Authentication error:', err);
@@ -101,25 +120,53 @@ const AuthPage = () => {
     }
   };
 
-  const handleOAuthLogin = (provider) => {
+  const handleOAuthLogin = async (provider) => {
     setLoading(true);
+    setError('');
     
-    // Simulate OAuth authentication
-    setTimeout(() => {
-      console.log(`Authenticating with ${provider}`);
-      // In a real implementation, this would redirect to OAuth provider
-      // Example: window.location.href = `/api/auth/${provider}`;
-      setLoading(false);
-      setSuccess(true);
+    try {
+      console.log(`AuthPage - Authenticating with ${provider}`);
       
-      setTimeout(() => {
-        navigate('/');
-      }, 2000);
-    }, 1500);
+      // For now, simulate OAuth login since we haven't implemented it yet
+      // In a real implementation, we would call something like:
+      // const result = await oauthLogin(provider);
+      
+      // For demo purposes, use the simulateLogin function if available
+      if (provider === 'google' && typeof simulateLogin === 'function') {
+        const mockUser = {
+          displayName: `${provider.charAt(0).toUpperCase() + provider.slice(1)} User`,
+          email: `user@${provider}.com`,
+          photoURL: null,
+          provider
+        };
+        
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        simulateLogin(mockUser);
+        setSuccess(true);
+        
+        setTimeout(() => {
+          navigate('/');
+        }, 1500);
+      } else {
+        // Fallback to simulated behavior
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        setSuccess(true);
+        
+        setTimeout(() => {
+          navigate('/');
+        }, 1500);
+      }
+    } catch (error) {
+      console.error(`AuthPage - ${provider} login error:`, error);
+      setError(`${provider} login failed. Please try again.`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="auth-page-container">
+      <AuthDebug />
       <div className="auth-page">
         <div className="auth-container">
           <div className="auth-header">

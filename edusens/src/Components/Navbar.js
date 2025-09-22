@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 import './Navbar.css';
 import Logo from '../Assets/Logoo.png';
 
@@ -10,21 +11,28 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   
-  // TEMPORARY: Mock auth state until Firebase is integrated
-  const [currentUser, setCurrentUser] = useState(null);
+  // Use the AuthContext for authentication
+  const { currentUser, logout, loading } = useContext(AuthContext);
   
-  // For testing UI: Uncomment this line to simulate a logged-in user
-  // const currentUser = { displayName: 'Test User', email: 'test@example.com' };
+  // Debug log to check if the context is updating
+  useEffect(() => {
+    console.log("Navbar - Current User:", currentUser);
+    console.log("Navbar - Auth Loading:", loading);
+  }, [currentUser, loading]);
   
-  // Mock logout function until Firebase is integrated
+  // Handle user logout
   const handleLogout = async () => {
     try {
-      // await logout(); - COMMENTED OUT
-      setCurrentUser(null); // Mock logout by clearing user
-      navigate('/');
-      setIsMenuOpen(false);
+      const result = await logout();
+      if (result.success) {
+        console.log("Navbar - Logout successful");
+        navigate('/');
+        setIsMenuOpen(false);
+      } else {
+        console.error("Navbar - Logout failed:", result.message);
+      }
     } catch (error) {
-      console.error("Logout failed:", error);
+      console.error("Navbar - Logout error:", error);
     }
   };
   
@@ -146,7 +154,17 @@ const Navbar = () => {
                 <div className="auth-button-container">
                   {currentUser ? (
                     <>
-                      <div className="user-info">
+                      <div className="user-profile">
+                        <div className="user-avatar">
+                          {/* If user has a photo, use it, otherwise show initial */}
+                          {currentUser.photoURL ? (
+                            <img src={currentUser.photoURL} alt="Profile" className="avatar-image" />
+                          ) : (
+                            <div className="avatar-initial">
+                              {(currentUser.displayName || currentUser.email || 'U')[0].toUpperCase()}
+                            </div>
+                          )}
+                        </div>
                         <span className="username">{currentUser.displayName || currentUser.email || 'User'}</span>
                       </div>
                       <button onClick={handleLogout} className="auth-button logout-button">
@@ -170,7 +188,17 @@ const Navbar = () => {
               <div className="auth-button-container">
                 {currentUser ? (
                   <>
-                    <div className="user-info">
+                    <div className="user-profile">
+                      <div className="user-avatar">
+                        {/* If user has a photo, use it, otherwise show initial */}
+                        {currentUser.photoURL ? (
+                          <img src={currentUser.photoURL} alt="Profile" className="avatar-image" />
+                        ) : (
+                          <div className="avatar-initial">
+                            {(currentUser.displayName || currentUser.email || 'U')[0].toUpperCase()}
+                          </div>
+                        )}
+                      </div>
                       <span className="username">{currentUser.displayName || currentUser.email || 'User'}</span>
                     </div>
                     <button onClick={handleLogout} className="auth-button logout-button">

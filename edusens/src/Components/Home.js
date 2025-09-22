@@ -8,22 +8,57 @@ import s1 from "../Assets/s1.jpg";
 import s2 from "../Assets/s2.jpg";
 import s3 from "../Assets/s3.jpg";
 import introVideo from '../Assets/eddd.mp4';
+import thumbnailImage from '../Assets/ThumbEdu.png';
 
-// Video component
+// Video component - YouTube-style implementation
 const VideoPlayer = () => {
+  // eslint-disable-next-line
   const [isPlaying, setIsPlaying] = useState(false);
+  const [showThumbnail, setShowThumbnail] = useState(true);
   const videoRef = useRef(null);
+  const thumbnailRef = useRef(null);
 
-  const togglePlay = () => {
+  // Play the video and hide the thumbnail
+  const playVideo = () => {
     if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
-      } else {
+      // Hide the thumbnail first
+      setShowThumbnail(false);
+      
+      // Then play the video (slight delay to allow for smooth transition)
+      setTimeout(() => {
         videoRef.current.play();
-      }
-      setIsPlaying(!isPlaying);
+        setIsPlaying(true);
+      }, 50);
     }
   };
+
+  // Handle when video ends or is manually reset
+  const handleVideoEnd = () => {
+    setIsPlaying(false);
+    setShowThumbnail(true);
+    
+    // Reset the video time to beginning
+    if (videoRef.current) {
+      videoRef.current.currentTime = 0;
+    }
+  };
+
+  // Initialize the video player
+  useEffect(() => {
+    // Ensure the video is ready
+    if (videoRef.current) {
+      // Add event listeners for better control
+      videoRef.current.addEventListener('ended', handleVideoEnd);
+      
+      // Remove event listeners on cleanup
+      return () => {
+        if (videoRef.current) {
+          // eslint-disable-next-line
+          videoRef.current.removeEventListener('ended', handleVideoEnd);
+        }
+      };
+    }
+  }, []);
 
   return (
     <section className="video-section">
@@ -31,24 +66,36 @@ const VideoPlayer = () => {
         <h2>Discover Your Future with EduSens</h2>
         <p>Watch our introductory video to learn how we help students find their career path</p>
         
-        <div className="video-wrapper">
+        <div className="video-wrapper youtube-style-player">
+          {/* The actual video element - hidden initially */}
           <video 
             ref={videoRef}
             className="intro-video"
-            poster="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23e2e8f0'/%3E%3Cpath d='M6,3 L10,5 L6,7 Z' fill='%230ea5e9'/%3E%3C/svg%3E"
-            controls
+            preload="metadata"
+            controls={!showThumbnail} // Only show controls after the thumbnail is hidden
           >
-            {/* In a real implementation, you would add your video source here */}
             <source src={introVideo} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
           
-          {!isPlaying && (
-            <div className="video-overlay" onClick={togglePlay}>
-              <button className="play-button">
-                {isPlaying ? <FaPause /> : <FaPlay />}
-              </button>
-            </div>
+          {/* Custom thumbnail overlay with YouTube-style play button */}
+          {showThumbnail && (
+            <>
+              <div 
+                ref={thumbnailRef}
+                className="custom-thumbnail" 
+                style={{ 
+                  backgroundImage: `url(${thumbnailImage})`,
+                  opacity: 1.9 /* Decreased opacity of the thumbnail */
+                }}
+                onClick={playVideo}
+              />
+              <div className="video-overlay" onClick={playVideo}>
+                <button className="play-button play-button-animation" aria-label="Play video">
+                  <FaPlay size={30} />
+                </button>
+              </div>
+            </>
           )}
         </div>
         
