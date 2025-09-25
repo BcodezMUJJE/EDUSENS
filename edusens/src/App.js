@@ -13,6 +13,7 @@ import JobShadowing from './Components/JobShadowing';
 import ComingSoon from './Components/ComingSoon';
 import PaymentPage from './Components/PaymentPage';
 import AIComingSoon from './Components/AIComingSoon';
+import AssessmentHistory from './Components/AssessmentHistory';
 import TermsAndConditions from './Pages/TermsAndConditions';
 import PrivacyPolicy from './Pages/PrivacyPolicy';
 
@@ -36,6 +37,7 @@ function App() {
               <Route path="/job-shadowing-coming-soon" element={<ComingSoon />} />
               <Route path="/payment" element={<PaymentPage />} />
               <Route path="/ai-coming-soon" element={<AIComingSoon />} />
+              <Route path="/assessment-history" element={<AssessmentHistory />} />
               <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             </Routes>
