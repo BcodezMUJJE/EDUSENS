@@ -60,18 +60,6 @@ const EduSensServices = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="services-cta">
-        <div className="cta-content">
-          <h2>Your Future Starts Here</h2>
-          <p>Choose one, two, or all three. Your future starts here.</p>
-          <p className="highlight">No more wasted time. Just a clear path forward.</p>
-          <button className="get-started-btn" onClick={() => console.log('Get Started clicked')}>
-            GET STARTED
-          </button>
-        </div>
-      </section>
-
       {/* Additional Services Info */}
       <section className="additional-services">
         <div className="service-info">
@@ -117,6 +105,15 @@ const EduSensServices = () => {
           <div className="info-image">
             <img src={Biz} alt="Job Shadowing" />
           </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="services-cta">
+        <div className="cta-content">
+          <button className="get-started-btn" onClick={() => console.log('Get Started clicked')}>
+            GET STARTED
+          </button>
         </div>
       </section>
     </div>

@@ -57,7 +57,7 @@ const ComingSoon = () => {
           test-drive your dream job with real professionals.
         </p>
         <p className="coming-soon-submessage">
-          Thank you for your interest! Please check back soon for updates.
+          Thank you for your interest! <strong>Please Enter Your Email Address Below To Get Notified.</strong>
         </p>
         
         <div className="notify-me-container">
@@ -78,9 +78,11 @@ const ComingSoon = () => {
                   className={error ? "error-input" : ""}
                   disabled={loading}
                 />
-                <button type="submit" disabled={loading}>
-                  {loading ? "Submitting..." : "Notify Me"}
-                </button>
+                <div className="button-center-wrapper">
+                  <button type="submit" disabled={loading}>
+                    {loading ? "Submitting..." : "Notify Me"}
+                  </button>
+                </div>
               </div>
               {error && <p className="error-message">{error}</p>}
             </form>

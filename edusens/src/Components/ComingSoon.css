@@ -16,6 +16,10 @@
   border-radius: 10px;
   padding: 3rem;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .coming-soon-logo {
@@ -73,6 +77,12 @@
   border-radius: 8px;
   max-width: 500px;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .notify-me-container h3 {
@@ -82,10 +92,18 @@
   color: #fff;
 }
 
-.notify-form .form-group {
+.notify-form {
   display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 .notify-form input {
@@ -138,6 +156,13 @@
 .success-message p {
   margin: 0;
   color: #fff;
+}
+
+.button-center-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 12px;
 }
 
 @media (max-width: 768px) {
