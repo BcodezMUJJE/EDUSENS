@@ -111,9 +111,11 @@ const EduSensServices = () => {
       {/* CTA Section */}
       <section className="services-cta">
         <div className="cta-content">
-          <button className="get-started-btn" onClick={() => console.log('Get Started clicked')}>
-            GET STARTED
-          </button>
+          <Link to="/Edusens-Careers">
+            <button className="get-started-btn">
+              GET STARTED
+            </button>
+          </Link>
         </div>
       </section>
     </div>

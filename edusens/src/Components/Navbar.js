@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+// import { AuthContext } from '../context/AuthContext';  // Commented out - auth disabled
 import './Navbar.css';
 import Logo from '../Assets/Logoo.png';
 
@@ -9,32 +9,32 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
   const location = useLocation();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();  // Commented out - auth disabled
   
-  // Use the AuthContext for authentication
-  const { currentUser, logout, loading } = useContext(AuthContext);
+  // Auth context usage commented out - auth disabled
+  // const { user, logout, loading } = useContext(AuthContext);
   
-  // Debug log to check if the context is updating
-  useEffect(() => {
-    console.log("Navbar - Current User:", currentUser);
-    console.log("Navbar - Auth Loading:", loading);
-  }, [currentUser, loading]);
+  // Debug log commented out - auth disabled
+  // useEffect(() => {
+  //   console.log("Navbar - Current User:", user);
+  //   console.log("Navbar - Auth Loading:", loading);
+  // }, [user, loading]);
   
-  // Handle user logout
-  const handleLogout = async () => {
-    try {
-      const result = await logout();
-      if (result.success) {
-        console.log("Navbar - Logout successful");
-        navigate('/');
-        setIsMenuOpen(false);
-      } else {
-        console.error("Navbar - Logout failed:", result.message);
-      }
-    } catch (error) {
-      console.error("Navbar - Logout error:", error);
-    }
-  };
+  // Handle user logout commented out - auth disabled
+  // const handleLogout = async () => {
+  //   try {
+  //     const result = await logout();
+  //     if (result.success) {
+  //       console.log("Navbar - Logout successful");
+  //       navigate('/');
+  //       setIsMenuOpen(false);
+  //     } else {
+  //       console.error("Navbar - Logout failed:", result.message);
+  //     }
+  //   } catch (error) {
+  //     console.error("Navbar - Logout error:", error);
+  //   }
+  // };
   
   // Track scroll position to add shadow when scrolled
   useEffect(() => {
@@ -149,28 +149,35 @@ const Navbar = () => {
                 CONTACT
               </Link>
               
-              {/* Auth section inside mobile menu for small screens */}
-              {screenWidth <= 767 && (
+              {/* Auth section inside mobile menu for small screens - COMMENTED OUT */}
+              {/* {screenWidth <= 767 && (
                 <div className="auth-button-container">
-                  {currentUser ? (
-                    <>
-                      <div className="user-profile">
+                  {user ? (
+                    <div className="user-dropdown-container mobile">
+                      <div className="user-avatar-wrapper">
                         <div className="user-avatar">
-                          {/* If user has a photo, use it, otherwise show initial */}
-                          {currentUser.photoURL ? (
-                            <img src={currentUser.photoURL} alt="Profile" className="avatar-image" />
+                          {user.avatar_url ? (
+                            <img src={user.avatar_url} alt="Profile" className="avatar-image" />
                           ) : (
                             <div className="avatar-initial">
-                              {(currentUser.displayName || currentUser.email || 'U')[0].toUpperCase()}
+                              {(user.full_name || user.username || user.email || 'U')[0].toUpperCase()}
                             </div>
                           )}
                         </div>
-                        <span className="username">{currentUser.displayName || currentUser.email || 'User'}</span>
+                        <div className="user-dropdown">
+                          <div className="dropdown-header">
+                            <span className="dropdown-username">{user.username || user.full_name || user.email || 'User'}</span>
+                          </div>
+                          <div className="dropdown-divider"></div>
+                          <button onClick={handleLogout} className="dropdown-logout-button">
+                            <svg className="logout-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                              <path d="M17 16l4-4m0 0l-4-4m4 4H7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                            </svg>
+                            <span>Log Out</span>
+                          </button>
+                        </div>
                       </div>
-                      <button onClick={handleLogout} className="auth-button logout-button">
-                        <span className="auth-button-text">Log Out</span>
-                      </button>
-                    </>
+                    </div>
                   ) : (
                     <Link to="/auth" className="auth-button" onClick={handleLinkClick}>
                       <span className="auth-button-text">Sign Up / Log In</span>
@@ -180,31 +187,38 @@ const Navbar = () => {
                     </Link>
                   )}
                 </div>
-              )}
+              )} */}
             </div>
             
-            {/* Auth section outside mobile menu for larger screens */}
-            {screenWidth > 767 && (
+            {/* Auth section outside mobile menu for larger screens - COMMENTED OUT */}
+            {/* {screenWidth > 767 && (
               <div className="auth-button-container">
-                {currentUser ? (
-                  <>
-                    <div className="user-profile">
+                {user ? (
+                  <div className="user-dropdown-container desktop">
+                    <div className="user-avatar-wrapper">
                       <div className="user-avatar">
-                        {/* If user has a photo, use it, otherwise show initial */}
-                        {currentUser.photoURL ? (
-                          <img src={currentUser.photoURL} alt="Profile" className="avatar-image" />
+                        {user.avatar_url ? (
+                          <img src={user.avatar_url} alt="Profile" className="avatar-image" />
                         ) : (
                           <div className="avatar-initial">
-                            {(currentUser.displayName || currentUser.email || 'U')[0].toUpperCase()}
+                            {(user.full_name || user.username || user.email || 'U')[0].toUpperCase()}
                           </div>
                         )}
                       </div>
-                      <span className="username">{currentUser.displayName || currentUser.email || 'User'}</span>
+                      <div className="user-dropdown">
+                        <div className="dropdown-header">
+                          <span className="dropdown-username">{user.username || user.full_name || user.email || 'User'}</span>
+                        </div>
+                        <div className="dropdown-divider"></div>
+                        <button onClick={handleLogout} className="dropdown-logout-button">
+                          <svg className="logout-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17 16l4-4m0 0l-4-4m4 4H7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                          <span>Log Out</span>
+                        </button>
+                      </div>
                     </div>
-                    <button onClick={handleLogout} className="auth-button logout-button">
-                      <span className="auth-button-text">Log Out</span>
-                    </button>
-                  </>
+                  </div>
                 ) : (
                   <Link to="/auth" className="auth-button">
                     <span className="auth-button-text">Sign Up / Log In</span>
@@ -214,7 +228,7 @@ const Navbar = () => {
                   </Link>
                 )}
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </nav>

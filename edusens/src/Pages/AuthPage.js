@@ -1,330 +1,398 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useContext, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import AuthDebug from '../Components/AuthDebug';
+import SocialAuth from '../Components/SocialAuth';
 import './AuthPage.css';
 
-// Social media icons
-import googleIcon from '../Assets/google-icon.svg';
-import microsoftIcon from '../Assets/microsoft-icon.svg';
-import appleIcon from '../Assets/apple-icon.svg';
-
 const AuthPage = () => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
+  const { user, login, register, loading, error, clearError, simulateLogin } = useContext(AuthContext);
   
-  // Access the AuthContext
-  const { login, signup, simulateLogin, currentUser } = useContext(AuthContext);
-  
-  // If user is already logged in, redirect to home page
+  const [isLogin, setIsLogin] = useState(true);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    fullName: '',
+    username: '',
+    confirmPassword: ''
+  });
+  const [formErrors, setFormErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  // Redirect if already authenticated
   useEffect(() => {
-    if (currentUser) {
-      console.log("AuthPage - User already logged in, redirecting to home");
+    if (user) {
       navigate('/');
     }
-  }, [currentUser, navigate]);
+  }, [user, navigate]);
 
-  // Clear form state when switching between login/signup modes
+  // Clear errors when switching between login/register
   useEffect(() => {
-    setEmail('');
-    setPassword('');
-    setConfirmPassword('');
-    setError('');
-    setSuccess(false);
-  }, [isLogin]);
+    clearError();
+    setFormErrors({});
+  }, [isLogin, clearError]);
 
-  // Form validation
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+    
+    // Clear specific field error when user starts typing
+    if (formErrors[name]) {
+      setFormErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
+  };
+
   const validateForm = () => {
-    // Reset error
-    setError('');
+    const errors = {};
 
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setError('Please enter a valid email address');
-      return false;
+    if (!formData.email) {
+      errors.email = 'Email is required';
+    } else if (!emailRegex.test(formData.email)) {
+      errors.email = 'Please enter a valid email address';
     }
 
     // Password validation
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters long');
-      return false;
+    if (!formData.password) {
+      errors.password = 'Password is required';
+    } else if (formData.password.length < 8) {
+      errors.password = 'Password must be at least 8 characters long';
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
+      errors.password = 'Password must contain at least one uppercase letter, one lowercase letter, and one number';
     }
 
-    // Password complexity check
-    const hasUpperCase = /[A-Z]/.test(password);
-    const hasLowerCase = /[a-z]/.test(password);
-    const hasNumbers = /\d/.test(password);
-    
-    if (!hasUpperCase || !hasLowerCase || !hasNumbers) {
-      setError('Password must contain uppercase, lowercase letters and numbers');
-      return false;
+    // Registration-specific validation
+    if (!isLogin) {
+      if (!formData.fullName) {
+        errors.fullName = 'Full name is required';
+      } else if (formData.fullName.length < 2) {
+        errors.fullName = 'Full name must be at least 2 characters long';
+      }
+
+      if (formData.username && formData.username.length < 3) {
+        errors.username = 'Username must be at least 3 characters long';
+      }
+
+      if (!formData.confirmPassword) {
+        errors.confirmPassword = 'Please confirm your password';
+      } else if (formData.password !== formData.confirmPassword) {
+        errors.confirmPassword = 'Passwords do not match';
+      }
     }
 
-    // Confirm password validation (for signup only)
-    if (!isLogin && password !== confirmPassword) {
-      setError('Passwords do not match');
-      return false;
-    }
-
-    return true;
+    return errors;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!validateForm()) {
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setFormErrors(validationErrors);
       return;
     }
 
-    setLoading(true);
-    setError('');
-
     try {
       let result;
-      
       if (isLogin) {
-        console.log("AuthPage - Logging in user:", email);
-        result = await login(email, password);
+        result = await login(formData.email, formData.password);
       } else {
-        console.log("AuthPage - Signing up user:", email);
-        // Use the full name if you have a field for it, or extract from email
-        const fullName = email.split('@')[0]; // Simple fallback if no full name field
-        result = await signup(fullName, email, password);
+        result = await register(
+          formData.fullName,
+          formData.email,
+          formData.password,
+          formData.username || undefined
+        );
       }
-      
+
       if (result.success) {
-        console.log("AuthPage - Authentication successful");
-        setSuccess(true);
-        
-        // Redirect to home page after successful authentication
-        setTimeout(() => {
-          navigate('/');
-        }, 1500);
+        navigate('/');
       } else {
-        setError(result.message || 'Authentication failed. Please try again.');
-        console.error('Authentication error:', result.message);
+        // Handle specific server errors
+        if (result.message?.includes('username')) {
+          setFormErrors({ username: result.message });
+        } else if (result.message?.includes('email')) {
+          setFormErrors({ email: result.message });
+        }
       }
     } catch (err) {
-      setError('Authentication failed. Please try again.');
-      console.error('Authentication error:', err);
-    } finally {
-      setLoading(false);
+      console.error('Auth error:', err);
     }
   };
 
-  const handleOAuthLogin = async (provider) => {
-    setLoading(true);
-    setError('');
-    
-    try {
-      console.log(`AuthPage - Authenticating with ${provider}`);
-      
-      // For now, simulate OAuth login since we haven't implemented it yet
-      // In a real implementation, we would call something like:
-      // const result = await oauthLogin(provider);
-      
-      // For demo purposes, use the simulateLogin function if available
-      if (provider === 'google' && typeof simulateLogin === 'function') {
-        const mockUser = {
-          displayName: `${provider.charAt(0).toUpperCase() + provider.slice(1)} User`,
-          email: `user@${provider}.com`,
-          photoURL: null,
-          provider
-        };
-        
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        simulateLogin(mockUser);
-        setSuccess(true);
-        
-        setTimeout(() => {
-          navigate('/');
-        }, 1500);
-      } else {
-        // Fallback to simulated behavior
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        setSuccess(true);
-        
-        setTimeout(() => {
-          navigate('/');
-        }, 1500);
-      }
-    } catch (error) {
-      console.error(`AuthPage - ${provider} login error:`, error);
-      setError(`${provider} login failed. Please try again.`);
-    } finally {
-      setLoading(false);
-    }
+  const toggleAuthMode = () => {
+    setIsLogin(!isLogin);
+    setFormData({
+      email: '',
+      password: '',
+      fullName: '',
+      username: '',
+      confirmPassword: ''
+    });
+    setFormErrors({});
+  };
+
+  const handleTestLogin = () => {
+    const testUser = {
+      id: 1,
+      full_name: 'Test User',
+      email: 'test@edusens.com',
+      username: 'testuser',
+      avatar_url: null,
+      provider: 'local'
+    };
+    simulateLogin(testUser);
   };
 
   return (
-    <div className="auth-page-container">
-      <AuthDebug />
-      <div className="auth-page">
-        <div className="auth-container">
-          <div className="auth-header">
-            <h1>{isLogin ? 'Log in to your Edusens Africa account' : 'Create account'}</h1>
-            <p>
-              {isLogin 
-                ? 'Welcome back! Please enter your details.' 
-                : 'Join EduSens Africa to access career guidance and learning resources.'}
-            </p>
-          </div>
+    <div className="auth-page">
+      <div className="auth-container">
+        <div className="auth-header">
 
-          {success && (
-            <div className="success-message">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              <span>{isLogin ? 'Login successful!' : 'Account created successfully!'} Redirecting...</span>
+          <h2>{isLogin ? 'Welcome Back' : 'Create Your Account'}</h2>
+          <p>
+            {isLogin 
+              ? 'Sign in to continue your learning journey' 
+              : 'Join thousands of learners on EduSens Africa'
+            }
+          </p>
+        </div>
+
+        {error && (
+          <div className="error-banner">
+            <svg className="error-icon" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+            </svg>
+            <span>{error}</span>
+            <button onClick={clearError} className="error-close">×</button>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="auth-form">
+          {!isLogin && (
+            <div className="form-group">
+              <label htmlFor="fullName">
+                Full Name <span className="required">*</span>
+              </label>
+              <input
+                type="text"
+                id="fullName"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleInputChange}
+                placeholder="Enter your full name"
+                className={formErrors.fullName ? 'error' : ''}
+                disabled={loading}
+              />
+              {formErrors.fullName && (
+                <span className="field-error">{formErrors.fullName}</span>
+              )}
             </div>
           )}
 
-          {!success && (
-            <>
-              <div className="oauth-buttons">
-                <button 
-                  className="oauth-button google"
-                  onClick={() => handleOAuthLogin('google')}
-                  disabled={loading}
-                >
-                  <img src={googleIcon} alt="Google" />
-                  <span>Continue with Google</span>
-                </button>
-                
-                <button 
-                  className="oauth-button microsoft"
-                  onClick={() => handleOAuthLogin('microsoft')}
-                  disabled={loading}
-                >
-                  <img src={microsoftIcon} alt="Microsoft" />
-                  <span>Continue with Microsoft</span>
-                </button>
-                
-                <button 
-                  className="oauth-button apple"
-                  onClick={() => handleOAuthLogin('apple')}
-                  disabled={loading}
-                >
-                  <img src={appleIcon} alt="Apple" />
-                  <span>Continue with Apple</span>
-                </button>
-              </div>
+          <div className="form-group">
+            <label htmlFor="email">
+              Email Address <span className="required">*</span>
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              placeholder="Enter your email address"
+              className={formErrors.email ? 'error' : ''}
+              disabled={loading}
+            />
+            {formErrors.email && (
+              <span className="field-error">{formErrors.email}</span>
+            )}
+          </div>
 
-              <div className="divider">
-                <span>or</span>
-              </div>
-
-              <form onSubmit={handleSubmit} className="auth-form">
-                {error && <div className="error-message">{error}</div>}
-                
-                <div className="form-group">
-                  <label htmlFor="email">Email</label>
-                  <input
-                    id="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    autoComplete="email"
-                    disabled={loading}
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="password">Password</label>
-                  <div className="password-input-container">
-                    <input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Enter your password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                      autoComplete={isLogin ? "current-password" : "new-password"}
-                      disabled={loading}
-                    />
-                    <button 
-                      type="button" 
-                      className="toggle-password"
-                      onClick={() => setShowPassword(!showPassword)}
-                      aria-label={showPassword ? "Hide password" : "Show password"}
-                    >
-                      {showPassword ? (
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                        </svg>
-                      ) : (
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                        </svg>
-                      )}
-                    </button>
-                  </div>
-                  {!isLogin && (
-                    <p className="password-hint">Must be at least 8 characters with uppercase, lowercase and numbers</p>
-                  )}
-                </div>
-
-                {!isLogin && (
-                  <div className="form-group">
-                    <label htmlFor="confirm-password">Confirm Password</label>
-                    <div className="password-input-container">
-                      <input
-                        id="confirm-password"
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Confirm your password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        required
-                        autoComplete="new-password"
-                        disabled={loading}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {isLogin && (
-                  <div className="forgot-password">
-                    <Link to="/forgot-password">Forgot password?</Link>
-                  </div>
-                )}
-
-                <button 
-                  type="submit" 
-                  className={`submit-button ${loading ? 'loading' : ''}`}
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <span className="loading-spinner"></span>
-                  ) : isLogin ? 'Log in' : 'Sign up'}
-                </button>
-              </form>
-            </>
+          {!isLogin && (
+            <div className="form-group">
+              <label htmlFor="username">
+                Username <span className="optional">(optional)</span>
+              </label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                value={formData.username}
+                onChange={handleInputChange}
+                placeholder="Choose a unique username"
+                className={formErrors.username ? 'error' : ''}
+                disabled={loading}
+              />
+              {formErrors.username && (
+                <span className="field-error">{formErrors.username}</span>
+              )}
+              <span className="field-hint">
+                Leave blank to auto-generate from your name
+              </span>
+            </div>
           )}
 
-          <div className="auth-footer">
-            <p>
-              {isLogin ? "Don't have an account?" : "Already have an account?"}
+          <div className="form-group">
+            <label htmlFor="password">
+              Password <span className="required">*</span>
+            </label>
+            <div className="password-input">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                placeholder={isLogin ? "Enter your password" : "Create a strong password"}
+                className={formErrors.password ? 'error' : ''}
+                disabled={loading}
+              />
               <button
-                className="toggle-auth-mode"
-                onClick={() => setIsLogin(!isLogin)}
-                disabled={loading || success}
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+                disabled={loading}
+                aria-label={showPassword ? "Hide password" : "Show password"}
               >
-                {isLogin ? 'Sign up' : 'Log in'}
+                {showPassword ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="password-icon">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 11-4.243-4.243m4.242 4.242L9.88 9.88" />
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="password-icon">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                )}
               </button>
+            </div>
+            {formErrors.password && (
+              <span className="field-error">{formErrors.password}</span>
+            )}
+            {!isLogin && (
+              <span className="field-hint">
+                Minimum 8 characters with uppercase, lowercase, and number
+              </span>
+            )}
+          </div>
+
+          {!isLogin && (
+            <div className="form-group">
+              <label htmlFor="confirmPassword">
+                Confirm Password <span className="required">*</span>
+              </label>
+              <div className="password-input">
+                <input
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  placeholder="Confirm your password"
+                  className={formErrors.confirmPassword ? 'error' : ''}
+                  disabled={loading}
+                />
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  disabled={loading}
+                  aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                >
+                  {showConfirmPassword ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="password-icon">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 11-4.243-4.243m4.242 4.242L9.88 9.88" />
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="password-icon">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+              {formErrors.confirmPassword && (
+                <span className="field-error">{formErrors.confirmPassword}</span>
+              )}
+            </div>
+          )}
+
+          {isLogin && (
+            <div className="form-extras">
+              <Link to="/forgot-password" className="forgot-password-link">
+                Forgot your password?
+              </Link>
+            </div>
+          )}
+
+          <button 
+            type="submit" 
+            className="auth-button" 
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <span className="loading-spinner"></span>
+                {isLogin ? 'Signing In...' : 'Creating Account...'}
+              </>
+            ) : (
+              isLogin ? 'Sign In' : 'Create Account'
+            )}
+          </button>
+        </form>
+
+        {/* Social Authentication */}
+        <SocialAuth mode={isLogin ? 'login' : 'register'} />
+
+        {/* Test Login Button - Development Only */}
+        <div style={{ marginTop: '16px', textAlign: 'center' }}>
+          <button 
+            type="button" 
+            onClick={handleTestLogin}
+            className="auth-button"
+            style={{ 
+              background: '#28a745', 
+              fontSize: '14px', 
+              padding: '8px 16px',
+              opacity: '0.8'
+            }}
+          >
+            🧪 Test Login (Dev Only)
+          </button>
+        </div>
+
+        <div className="auth-switch">
+          <p>
+            {isLogin ? "Don't have an account? " : "Already have an account? "}
+            <button
+              type="button"
+              className="switch-button"
+              onClick={toggleAuthMode}
+              disabled={loading}
+            >
+              {isLogin ? 'Sign Up' : 'Sign In'}
+            </button>
+          </p>
+        </div>
+
+        {!isLogin && (
+          <div className="terms-notice">
+            <p>
+              By creating an account, you agree to our{' '}
+              <Link to="/terms" className="terms-link">Terms of Service</Link>
+              {' '}and{' '}
+              <Link to="/privacy" className="terms-link">Privacy Policy</Link>
             </p>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

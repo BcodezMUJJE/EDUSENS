@@ -1,5 +1,7 @@
 .query-form-container {
   width: 100%;
+  max-width: 600px;
+  max-height: 1200px;
 }
 
 .query-form-container h2 {

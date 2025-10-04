@@ -1,86 +1,81 @@
 import React, { useState, useEffect, useRef } from 'react';
-import QueryForm from './QueryForm';
 
 const ContactUsPage = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [messages, setMessages] = useState([
-    { text: 'Hello 👋, I\'m EduBot. I can tell you a bit about EduSens Africa and help guide you on career learning courses for children.', sender: 'bot' }
-  ]);
+  const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
+  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
+  const [formErrors, setFormErrors] = useState({});
+  const [formSuccess, setFormSuccess] = useState(false);
   const messagesEndRef = useRef(null);
 
   // Define intents and their corresponding patterns and responses
   const intents = {
     greeting: {
-      patterns: ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'greetings'],
-      response: "Hi 👋 Welcome to EduSens Africa! I'm your virtual assistant, here to help you explore careers, education programs, and real-world job experiences. What would you like to know about today?"
+      patterns: ["hello", "hi", "hey", "good morning", "good afternoon", "good evening"],
+      response: () => {
+        const hour = new Date().getHours();
+        let greetingTime = "Hello";
+        if (hour < 12) greetingTime = "Good morning";
+        else if (hour < 18) greetingTime = "Good afternoon";
+        else greetingTime = "Good evening";
+        return `👋 ${greetingTime}! Welcome to EduSens Africa. How can I assist you today?`;
+      }
     },
     services: {
-      patterns: ['what services do you offer', 'tell me about your services', 'what do you do', 'services'],
-      response: "We currently offer three main services:\n1️⃣ AI Career Guidance (Available across Africa)\n2️⃣ Career Education Programs (Available across Africa)\n3️⃣ Job Shadowing (Currently in Kenya only)\nWhich one would you like to learn more about?"
+      patterns: ["services", "what do you offer", "programs", "solutions", "offerings"],
+      response: "🌍 EduSens Africa provides three main services:\n1️⃣ AI Career Guidance (Across Africa)\n2️⃣ Career Education Programs (Across Africa)\n3️⃣ Job Shadowing (Kenya only)"
     },
     aiCareerGuidance: {
-      patterns: ['tell me about ai career guidance', 'career guidance', 'career quiz', 'ai career guidance'],
-      response: "Our AI Career Guidance helps you discover careers that align with your strengths, personality, and interests 🎯. You'll interact with our AI through an exciting quiz—the more you share, the better the feedback you get. Would you like me to show you how to get started?"
+      patterns: ["career guidance", "ai career guidance", "career quiz", "career assessment"],
+      response: "🎯 Our AI Career Guidance helps you discover careers matching your strengths and interests. Would you like me to show you how to start?"
     },
     careerEducation: {
-      patterns: ['tell me about career education', 'career education', 'career programs'],
-      response: "Our Career Education Program is a 3-week journey that begins with training on motivation, self-belief, and personal development before diving deep into your chosen career.\n\nYou'll explore:\n\n• Educational requirements\n\n• Institutions offering the program\n\n• Job opportunities & skills needed\n\n• Insights from real professionals, details of the job duties\n\n🗓 Runs during school holidays (April, August, November–December).\n📱💻 Accessible via phone, computer, or laptop with internet.\nParents can also sign up for progress updates as students hit milestones."
+      patterns: ["career education", "career programs", "education programs", "career training"],
+      response: "📚 Our Career Education Program is a 3-week course covering personal development, educational paths, job opportunities, and insights from professionals."
     },
     jobShadowing: {
-      patterns: ['tell me about job shadowing', 'job shadowing', 'shadowing program'],
-      response: "Our Job Shadowing program offers a 3-day real-world experience with a qualified professional in your chosen field. You'll see what the career is really like—virtually or physically (depending on your preference and the profession).\n\n📍 Currently available in Kenya only, during school holidays, and must be booked in advance. Would you like me to share how to apply?"
+      patterns: ["job shadowing", "shadow program", "career exposure", "work experience"],
+      response: "💼 Our Job Shadowing program offers a 3-day experience with professionals in your field—virtually or physically. Available in Kenya 🇰🇪 only."
     },
-    support: {
-      patterns: ['i need help', 'support', 'contact', 'how can i reach you'],
-      response: "I can help you with:\n1️⃣ Service Information\n2️⃣ Program Registration\n3️⃣ Parent Updates\n4️⃣ Contact Support Team\n5️⃣ Social Media Links"
-    },
-    parentUpdates: {
-      patterns: ['how can parents track progress', 'parent updates', 'parents info'],
-      response: "Parents can sign up alongside their children to receive updates on their child's progress and milestones 🎯. Would you like me to guide you on how to enroll for updates?"
-    },
-    contact: {
-      patterns: ['how do i contact you', 'contact info', 'email', 'whatsapp'],
-      response: "You can reach us at:\n📧 Email: info@edusensafrica.com\n\n📲 WhatsApp: +254790966319"
+    contactUs: {
+      patterns: ["how do i reach out", "how do i reachout", "contact info", "contact information", "contacts", "phone number", "contact details", "email", "whatsapp"],
+      response: "📩 Thanks for chatting with EduSens Africa today. Contact us at info@edusensafrica.com or WhatsApp: +254790966319."
     },
     socialMedia: {
-      patterns: ['social media', 'facebook', 'twitter', 'youtube', 'x'],
-      response: "Follow us for updates:\nYouTube: EduSens Africa\nFacebook: EduSens Africa\nX (Twitter): @edusensafrica"
+      patterns: ["social media", "facebook", "twitter", "youtube", "x", "follow"],
+      response: "📲 Follow us:\nYouTube: EduSens Africa\nFacebook: EduSens Africa\nX (Twitter): @edusensafrica"
     },
-    whoCanJoin: {
-      patterns: ['who can join', 'eligibility', 'who is this for'],
-      response: "Our AI Career Guidance and Career Education programs are open to all users across Africa. Job shadowing is currently available in Kenya 🇰🇪."
+    eligibility: {
+      patterns: ["who can join", "eligibility", "requirements"],
+      response: "✅ AI Career Guidance & Career Education → Open to all in Africa.\n✅ Job Shadowing → Kenya only."
     },
     programTiming: {
-      patterns: ['when are your programs', 'schedule', 'when do they run'],
-      response: "Our Career Education and Job Shadowing programs run during school holidays: April, August, and November–December."
+      patterns: ["when are your programs", "schedule", "program dates", "timing"],
+      response: "📅 Programs run during school holidays: April, August, Nov–Dec."
     },
     duration: {
-      patterns: ['how long are the programs', 'duration', 'length of program'],
-      response: "Career Education → 3 weeks; Job Shadowing → 3 days"
+      patterns: ["how long are the programs", "duration", "length"],
+      response: "⏳ Career Education → 3 weeks\n⏳ Job Shadowing → 3 days"
     },
-    onlineOrPhysical: {
-      patterns: ['are your services online', 'virtual or physical', 'how to access'],
-      response: "All our programs can be accessed online through mobile phone, computer, or laptop with an internet connection. Job Shadowing can be virtual or physical."
-    },
-    parentTracking: {
-      patterns: ['can parents track progress', 'do parents get updates'],
-      response: "Yes ✅ Parents can sign up for updates."
+    accessMethod: {
+      patterns: ["are your services online", "virtual or physical", "how to access"],
+      response: "💻 Services are online via mobile, laptop, or PC. Job Shadowing can be virtual or physical (Kenya only)."
     },
     registration: {
-      patterns: ['how do i register', 'sign up', 'join program'],
-      response: "You can register by contacting us on WhatsApp: +254790966319 or email: info@edusensafrica.com"
+      patterns: ["how do i register", "sign up", "join program", "enroll"],
+      response: "📝 Register via WhatsApp: +254790966319 or Email: info@edusensafrica.com"
     },
     fees: {
-      patterns: ['is it free', 'cost', 'fees', 'pricing'],
-      response: "Our programs have affordable fees depending on the service."
+      patterns: ["is it free", "cost", "fees", "pricing", "how much"],
+      response: "💵 Programs are affordable and vary by service. Contact us for details."
     },
     closing: {
-      patterns: ['thanks', 'goodbye', 'end chat', 'bye'],
-      response: "Thanks for chatting with EduSens Africa today. Don't forget to follow us on YouTube, Facebook, and X for updates. Wishing you success on your career journey 🚀 Come back anytime for more guidance!"
+      patterns: ["thanks", "goodbye", "end chat", "bye", "see you"],
+      response: "🙏 Thank you for chatting with EduSens Africa. Follow us on YouTube, Facebook, and X. Wishing you success 🚀"
     },
     fallback: {
-      response: "I'm not sure I understand. Would you like to know about our services, career guidance, education programs, or job shadowing opportunities? You can also ask about how to contact us or get support."
+      response: "I'm not sure I understand. Would you like to know about our services, career guidance, education programs, or job shadowing opportunities? You can also ask how to contact us or get support."
     }
   };
 
@@ -101,6 +96,13 @@ const ContactUsPage = () => {
     return 'fallback';
   };
 
+  // Initial bot message on component mount
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    const initialMessage = intents.greeting.response();
+    setMessages([{ text: initialMessage, sender: 'bot' }]);
+  }, []);
+
   const handleSendMessage = (e) => {
     e.preventDefault();
     if (inputMessage.trim() === '') return;
@@ -112,7 +114,9 @@ const ContactUsPage = () => {
     
     // Identify intent and get response
     const intent = identifyIntent(userMsg);
-    const botResponse = intents[intent].response;
+    const botResponse = typeof intents[intent].response === 'function' 
+      ? intents[intent].response() 
+      : intents[intent].response;
     
     // Add bot response after a short delay
     setTimeout(() => {
@@ -133,6 +137,32 @@ const ContactUsPage = () => {
 
   const handleWhatsAppClick = () => {
     window.location.href = 'https://wa.me/254790966319';
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    if (!form.name.trim()) errors.name = 'Name is required';
+    if (!form.email.trim()) errors.email = 'Email is required';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errors.email = 'Invalid email address';
+    if (!form.subject.trim()) errors.subject = 'Subject is required';
+    if (!form.message.trim()) errors.message = 'Message is required';
+    return errors;
+  };
+
+  const handleFormChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+    setFormErrors({ ...formErrors, [e.target.name]: undefined });
+  };
+
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    const errors = validateForm();
+    setFormErrors(errors);
+    if (Object.keys(errors).length === 0) {
+      setFormSuccess(true);
+      setTimeout(() => setFormSuccess(false), 4000);
+      setForm({ name: '', email: '', subject: '', message: '' });
+    }
   };
 
   return (
@@ -175,8 +205,77 @@ const ContactUsPage = () => {
         </div>
         
         {/* Add the query form section */}
-        <div className="query-section">
-          <QueryForm />
+        <div className="query-section" aria-label="Send Us a Message">
+          <form className="contact-form-card" onSubmit={handleFormSubmit} noValidate>
+            <h2 className="form-title">Send Us a Message</h2>
+            {formSuccess && <div className="form-success" role="status">Thank you! Your message has been sent.</div>}
+            <div className="form-group">
+              <label htmlFor="name">Name</label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                placeholder="Your full name"
+                value={form.name}
+                onChange={handleFormChange}
+                className={formErrors.name ? 'error' : ''}
+                aria-invalid={!!formErrors.name}
+                aria-describedby={formErrors.name ? 'name-error' : undefined}
+                autoComplete="name"
+              />
+              {formErrors.name && <span className="form-error" id="name-error">{formErrors.name}</span>}
+            </div>
+            <div className="form-group">
+              <label htmlFor="email">Email</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="you@email.com"
+                value={form.email}
+                onChange={handleFormChange}
+                className={formErrors.email ? 'error' : ''}
+                aria-invalid={!!formErrors.email}
+                aria-describedby={formErrors.email ? 'email-error' : undefined}
+                autoComplete="email"
+              />
+              {formErrors.email && <span className="form-error" id="email-error">{formErrors.email}</span>}
+            </div>
+            <div className="form-group">
+              <label htmlFor="subject">Subject</label>
+              <input
+                id="subject"
+                name="subject"
+                type="text"
+                placeholder="Subject of your message"
+                value={form.subject}
+                onChange={handleFormChange}
+                className={formErrors.subject ? 'error' : ''}
+                aria-invalid={!!formErrors.subject}
+                aria-describedby={formErrors.subject ? 'subject-error' : undefined}
+                autoComplete="off"
+              />
+              {formErrors.subject && <span className="form-error" id="subject-error">{formErrors.subject}</span>}
+            </div>
+            <div className="form-group">
+              <label htmlFor="message">Message</label>
+              <textarea
+                id="message"
+                name="message"
+                placeholder="Type your message here..."
+                value={form.message}
+                onChange={handleFormChange}
+                className={formErrors.message ? 'error' : ''}
+                aria-invalid={!!formErrors.message}
+                aria-describedby={formErrors.message ? 'message-error' : undefined}
+                rows={5}
+              />
+              {formErrors.message && <span className="form-error" id="message-error">{formErrors.message}</span>}
+            </div>
+            <button type="submit" className="form-submit-btn" aria-label="Send message">
+              Send Message
+            </button>
+          </form>
         </div>
       </div>
 
@@ -221,15 +320,15 @@ const ContactUsPage = () => {
 
             <div className="quick-replies">
               <button onClick={() => {
-                setInputMessage('What services do you offer?');
+                setInputMessage('services');
                 handleSendMessage({ preventDefault: () => {} });
               }}>Services</button>
               <button onClick={() => {
-                setInputMessage('Career guidance');
+                setInputMessage('career guidance');
                 handleSendMessage({ preventDefault: () => {} });
               }}>Career Guidance</button>
               <button onClick={() => {
-                setInputMessage('Contact info');
+                setInputMessage('contact info');
                 handleSendMessage({ preventDefault: () => {} });
               }}>Contact</button>
             </div>
@@ -613,29 +712,112 @@ const ContactUsPage = () => {
         /* Query form section styles */
         .query-section {
           margin-top: 3rem;
-          padding: 2rem;
-          background-color: white;
-          border-radius: 1rem;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+          background: none;
+          box-shadow: none;
+          padding: 0;
         }
-        
+        .contact-form-card {
+          background: #fff;
+          border-radius: 1.25rem;
+          box-shadow: 0 6px 24px -4px rgba(30,41,59,0.10), 0 1.5px 4px -1px rgba(30,41,59,0.06);
+          padding: 2rem 2rem 1.5rem 2rem;
+          width: 100%;
+          max-width: 420px;
+          display: flex;
+          flex-direction: column;
+          gap: 1.25rem;
+          margin: 0 auto;
+        }
+        .form-title {
+          font-size: 1.35rem;
+          font-weight: 600;
+          color: #0ea5e9;
+          margin-bottom: 0.5rem;
+          text-align: center;
+        }
+        .form-group {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+        }
+        .contact-form-card label {
+          font-size: 1rem;
+          font-weight: 500;
+          color: #1e293b;
+          margin-bottom: 0.2rem;
+        }
+        .contact-form-card input,
+        .contact-form-card textarea {
+          width: 100%;
+          padding: 0.75rem 1rem;
+          border: 1.5px solid #d1d5db;
+          border-radius: 0.75rem;
+          background: #f9fafb;
+          font-size: 1rem;
+          color: #334155;
+          transition: border-color 0.2s, box-shadow 0.2s;
+          font-family: inherit;
+          outline: none;
+        }
+        .contact-form-card input:focus,
+        .contact-form-card textarea:focus {
+          border-color: #0ea5e9;
+          box-shadow: 0 0 0 2px rgba(14,165,233,0.10);
+          background: #fff;
+        }
+        .contact-form-card input.error,
+        .contact-form-card textarea.error {
+          border-color: #ef4444;
+          background: #fef2f2;
+        }
+        .form-error {
+          color: #ef4444;
+          font-size: 0.95rem;
+          margin-top: 0.1rem;
+          font-weight: 500;
+        }
+        .form-success {
+          color: #22c55e;
+          font-size: 1rem;
+          margin-bottom: 0.5rem;
+          font-weight: 600;
+          text-align: center;
+          background: #f0fdf4;
+          border-radius: 0.5rem;
+          padding: 0.5rem 0.75rem;
+        }
+        .form-submit-btn {
+          background: linear-gradient(90deg, #0ea5e9 60%, #0284c7 100%);
+          color: #fff;
+          border: none;
+          border-radius: 0.75rem;
+          padding: 0.85rem 0;
+          font-size: 1.1rem;
+          font-weight: 700;
+          cursor: pointer;
+          margin-top: 0.5rem;
+          box-shadow: 0 2px 8px rgba(14,165,233,0.08);
+          transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+          width: 100%;
+          letter-spacing: 0.01em;
+        }
+        .form-submit-btn:hover,
+        .form-submit-btn:focus {
+          background: linear-gradient(90deg, #0284c7 60%, #0ea5e9 100%);
+          transform: translateY(-2px) scale(1.01);
+          box-shadow: 0 4px 16px rgba(14,165,233,0.13);
+          outline: none;
+        }
         @media (max-width: 640px) {
-          .page-header h1 {
-            font-size: 2rem;
+          .contact-form-card {
+            padding: 1.25rem 0.75rem 1rem 0.75rem;
+            max-width: 100%;
           }
-          
-          .contact-info-card, .whatsapp-card {
-            padding: 1.5rem;
-          }
-          
-          .chatbot-widget {
-            right: 1rem;
-            bottom: 1rem;
-            width: calc(100vw - 2rem);
-          }
-          
-          .query-section {
-            padding: 1.5rem;
+          .form-title {
+            font-size: 1.1rem;
           }
         }
       `}</style>

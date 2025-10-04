@@ -346,7 +346,8 @@ const CareerExplorer = () => {
   };
 
   const handleGetStarted = () => {
-    navigate('/payment', { state: { career: selectedCareer } });
+    // Navigate to coming soon page instead of payment page
+    navigate('/course-coming-soon');
   };
 
   const handleSearchChange = (e) => {
