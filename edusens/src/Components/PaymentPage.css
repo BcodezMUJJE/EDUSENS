@@ -620,3 +620,76 @@
     padding: 20px;
   }
 }
+
+/* Mobile (480px) */
+@media (max-width: 480px) {
+  .payment-container {
+    padding: 20px;
+  }
+  
+  .payment-page h1 {
+    font-size: 1.6rem;
+  }
+  
+  .payment-option {
+    padding: 12px;
+  }
+  
+  .payment-logo {
+    width: 40px;
+    height: 40px;
+    margin-right: 12px;
+  }
+  
+  .method-details {
+    padding: 15px;
+  }
+  
+  .form-group label {
+    font-size: 0.9rem;
+  }
+  
+  .form-control {
+    padding: 10px;
+    font-size: 14px;
+  }
+}
+
+/* Small mobile (320px) */
+@media (max-width: 320px) {
+  .payment-container {
+    padding: 15px;
+  }
+  
+  .payment-page h1 {
+    font-size: 1.4rem;
+  }
+  
+  .payment-summary {
+    padding: 15px;
+  }
+  
+  .payment-option {
+    padding: 10px;
+  }
+  
+  .payment-logo {
+    width: 35px;
+    height: 35px;
+    margin-right: 10px;
+  }
+  
+  .method-details {
+    padding: 12px;
+  }
+  
+  .form-control {
+    padding: 8px;
+    font-size: 12px;
+  }
+  
+  .btn-primary {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+}

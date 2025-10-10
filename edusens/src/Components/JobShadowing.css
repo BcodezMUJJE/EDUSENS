@@ -103,3 +103,22 @@
     font-size: 1rem;
   }
 }
+
+@media (max-width: 320px) {
+  .job-shadowing-content {
+    padding: 30px 15px;
+  }
+  
+  .job-shadowing-title {
+    font-size: 1.6rem;
+  }
+  
+  .job-shadowing-description {
+    font-size: 0.9rem;
+  }
+  
+  .apply-button {
+    padding: 12px 30px;
+    font-size: 1rem;
+  }
+}

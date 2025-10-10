@@ -46,4 +46,27 @@
 .content-wrapper {
   flex: 1;
   margin-top: 74px; /* Height of navbar (70px) + indicator bar (4px) */
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Responsive adjustments for content wrapper */
+@media (max-width: 767px) {
+  .content-wrapper {
+    margin-top: 64px; /* Adjusted for mobile navbar height */
+  }
+}
+
+@media (max-width: 480px) {
+  .content-wrapper {
+    margin-top: 60px;
+    padding: 0 5px;
+  }
+}
+
+@media (max-width: 320px) {
+  .content-wrapper {
+    margin-top: 56px;
+    padding: 0 2px;
+  }
 }

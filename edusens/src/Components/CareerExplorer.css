@@ -322,3 +322,80 @@
     text-align: center;
   }
 }
+
+@media (max-width: 480px) {
+  .career-explorer {
+    padding: 15px 10px;
+  }
+  
+  .hero h1 {
+    font-size: 2rem;
+  }
+  
+  .hero p {
+    font-size: 1rem;
+  }
+  
+  .search-container input {
+    padding: 10px;
+    font-size: 14px;
+  }
+  
+  .tab {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+  
+  .career-card {
+    padding: 15px;
+  }
+  
+  .career-card h3 {
+    font-size: 1.2rem;
+  }
+  
+  .career-card p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 320px) {
+  .career-explorer {
+    padding: 10px 8px;
+  }
+  
+  .hero h1 {
+    font-size: 1.8rem;
+  }
+  
+  .hero p {
+    font-size: 0.9rem;
+  }
+  
+  .search-container input {
+    padding: 8px;
+    font-size: 12px;
+  }
+  
+  .tab {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  
+  .career-card {
+    padding: 12px;
+  }
+  
+  .career-card h3 {
+    font-size: 1.1rem;
+  }
+  
+  .career-card p {
+    font-size: 0.85rem;
+  }
+  
+  .career-card button {
+    padding: 8px 15px;
+    font-size: 12px;
+  }
+}

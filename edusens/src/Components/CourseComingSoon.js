@@ -57,29 +57,7 @@ const CourseComingSoon = () => {
 
         {/* Features Grid */}
         <div className="features-section">
-          <h2 className="features-title">What Makes Us Different</h2>
-          <div className="features-grid">
-            <div className="feature-card">
-              <div className="feature-icon">🎯</div>
-              <h3>AI Career Matching</h3>
-              <p>Smart algorithms analyze your skills and interests to match you with perfect career paths</p>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">👨‍🏫</div>
-              <h3>Expert Mentorship</h3>
-              <p>Connect with industry leaders and experienced career coaches for personalized guidance</p>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">📈</div>
-              <h3>Growth Tracking</h3>
-              <p>Monitor your progress with detailed analytics and milestone achievements</p>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">🏆</div>
-              <h3>Certifications</h3>
-              <p>Earn industry-recognized certificates to boost your professional profile</p>
-            </div>
-          </div>
+          {/* Features section removed and moved to OurServices.js */}
         </div>
 
         {/* Email Notification Section */}

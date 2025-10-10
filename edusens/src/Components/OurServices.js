@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './OurServices.css';
+import './CourseComingSoon.css';
 import Ai from '../Assets/Ai.jpeg';
 import Biz from '../Assets/BusinessMen.jpeg';
 import Insights from '../Assets/Insight.jpeg';
@@ -13,9 +14,6 @@ const EduSensServices = () => {
         <div className="hero-content">
           <h1>Our Services</h1>
           <p className="hero-subtitle">We help you skip the confusion and focus on what truly fits you</p>
-          <div className="hero-description">
-            <p>Consectetur adipiscing elit nullam nunc justo sagittis suscipit ultricies.</p>
-          </div>
         </div>
       </section>
 
@@ -104,6 +102,33 @@ const EduSensServices = () => {
           </div>
           <div className="info-image">
             <img src={Biz} alt="Job Shadowing" />
+          </div>
+        </div>
+      </section>
+
+      {/* What Makes Us Different Section (moved from CourseComingSoon.js) */}
+      <section className="features-section">
+        <h2 className="features-title">What Makes Us Different</h2>
+        <div className="features-grid">
+          <div className="feature-card">
+            <div className="feature-icon">🎯</div>
+            <h3>AI Career Matching</h3>
+            <p>Smart algorithms analyze your skills and interests to match you with perfect career paths</p>
+          </div>
+          <div className="feature-card">
+            <div className="feature-icon">👨‍🏫</div>
+            <h3>Expert Mentorship</h3>
+            <p>Connect with industry leaders and experienced career coaches for personalized guidance</p>
+          </div>
+          <div className="feature-card">
+            <div className="feature-icon">📈</div>
+            <h3>Growth Tracking</h3>
+            <p>Monitor your progress with detailed analytics and milestone achievements</p>
+          </div>
+          <div className="feature-card">
+            <div className="feature-icon">🏆</div>
+            <h3>Certifications</h3>
+            <p>Earn industry-recognized certificates to boost your professional profile</p>
           </div>
         </div>
       </section>

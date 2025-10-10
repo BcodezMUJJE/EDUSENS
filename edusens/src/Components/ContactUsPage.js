@@ -1,16 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const ContactUsPage = () => {
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [messages, setMessages] = useState([]);
-  const [inputMessage, setInputMessage] = useState('');
-  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
-  const [formErrors, setFormErrors] = useState({});
-  const [formSuccess, setFormSuccess] = useState(false);
-  const messagesEndRef = useRef(null);
-
-  // Define intents and their corresponding patterns and responses
-  const intents = {
+// Define intents and their corresponding patterns and responses outside component
+const intents = {
     greeting: {
       patterns: ["hello", "hi", "hey", "good morning", "good afternoon", "good evening"],
       response: () => {
@@ -79,6 +70,15 @@ const ContactUsPage = () => {
     }
   };
 
+const ContactUsPage = () => {
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [inputMessage, setInputMessage] = useState('');
+  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
+  const [formErrors, setFormErrors] = useState({});
+  const [formSuccess, setFormSuccess] = useState(false);
+  const messagesEndRef = useRef(null);
+
   // Function to identify the intent based on user input
   const identifyIntent = (input) => {
     const normalizedInput = input.toLowerCase().trim();
@@ -97,7 +97,6 @@ const ContactUsPage = () => {
   };
 
   // Initial bot message on component mount
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     const initialMessage = intents.greeting.response();
     setMessages([{ text: initialMessage, sender: 'bot' }]);
@@ -402,6 +401,156 @@ const ContactUsPage = () => {
           padding: 2rem;
           box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
           transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        @media (max-width: 440px) {
+          .contact-info-card, .whatsapp-card {
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+          }
+          
+          .contact-info-card h2, .whatsapp-card h2 {
+            font-size: 1.25rem;
+          }
+          
+          .contact-info-card p, .whatsapp-card p {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+          }
+          
+          .icon-wrapper {
+            width: 2.5rem;
+            height: 2.5rem;
+          }
+          
+          .icon-wrapper svg {
+            width: 1.25rem;
+            height: 1.25rem;
+          }
+          
+          .whatsapp-button {
+            padding: 0.65rem 1.25rem;
+            font-size: 0.9rem;
+          }
+          
+          .whatsapp-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+          }
+        }
+        
+        @media (max-width: 360px) {
+          .contact-info-card, .whatsapp-card {
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+          }
+          
+          .contact-info-card h2, .whatsapp-card h2 {
+            font-size: 1.125rem;
+            margin-bottom: 0.75rem;
+          }
+          
+          .contact-info-card p, .whatsapp-card p {
+            font-size: 0.95rem;
+            margin-bottom: 0.875rem;
+          }
+          
+          .contact-item {
+            padding: 0.5rem;
+            gap: 0.75rem;
+          }
+          
+          .icon-wrapper {
+            width: 2.25rem;
+            height: 2.25rem;
+          }
+          
+          .icon-wrapper svg {
+            width: 1.125rem;
+            height: 1.125rem;
+          }
+          
+          .contact-text p:first-child {
+            font-size: 0.8rem;
+          }
+          
+          .whatsapp-button {
+            padding: 0.6rem 1rem;
+            font-size: 0.85rem;
+            gap: 0.5rem;
+          }
+          
+          .whatsapp-icon {
+            width: 1.125rem;
+            height: 1.125rem;
+          }
+        }
+        
+        @media (max-width: 320px) {
+          .contact-page {
+            padding: 1.5rem 0.75rem;
+          }
+          
+          .contact-grid {
+            gap: 1.5rem;
+          }
+          
+          .contact-info-card, .whatsapp-card {
+            padding: 1rem;
+            border-radius: 0.5rem;
+          }
+          
+          .contact-info-card h2, .whatsapp-card h2 {
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+          }
+          
+          .contact-info-card p, .whatsapp-card p {
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+          }
+          
+          .contact-item {
+            padding: 0.375rem;
+            gap: 0.5rem;
+          }
+          
+          .icon-wrapper {
+            width: 2rem;
+            height: 2rem;
+          }
+          
+          .icon-wrapper svg {
+            width: 1rem;
+            height: 1rem;
+          }
+          
+          .contact-text p:first-child {
+            font-size: 0.75rem;
+          }
+          
+          .contact-value {
+            font-size: 0.8rem !important;
+          }
+          
+          .whatsapp-button {
+            padding: 0.5rem 0.875rem;
+            font-size: 0.8rem;
+            gap: 0.375rem;
+          }
+          
+          .whatsapp-icon {
+            width: 1rem;
+            height: 1rem;
+          }
+          
+          .page-header h1 {
+            font-size: 2rem;
+          }
+          
+          .page-header p {
+            font-size: 1rem;
+          }
         }
         
         .contact-info-card:hover, .whatsapp-card:hover {

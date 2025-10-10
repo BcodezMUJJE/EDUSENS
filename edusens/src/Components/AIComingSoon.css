@@ -180,3 +180,65 @@
     border-radius: 4px;
   }
 }
+
+@media (max-width: 480px) {
+  .ai-coming-soon {
+    padding: 30px 15px;
+  }
+  
+  .main-title {
+    font-size: 2rem;
+  }
+  
+  .subtitle {
+    font-size: 1rem;
+  }
+  
+  .notify-input {
+    padding: 10px;
+    font-size: 14px;
+  }
+  
+  .notify-button {
+    padding: 12px 20px;
+    font-size: 14px;
+  }
+  
+  .go-back-button {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 320px) {
+  .ai-coming-soon {
+    padding: 25px 10px;
+  }
+  
+  .main-title {
+    font-size: 1.8rem;
+  }
+  
+  .subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .description {
+    font-size: 0.85rem;
+  }
+  
+  .notify-input {
+    padding: 8px;
+    font-size: 12px;
+  }
+  
+  .notify-button {
+    padding: 10px 16px;
+    font-size: 12px;
+  }
+  
+  .go-back-button {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}
