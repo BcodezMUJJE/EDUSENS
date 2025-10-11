@@ -149,7 +149,7 @@
 /* Footer Bottom */
 .footer-bottom {
   padding: 2rem 0 1.5rem;
-  background: rgba(0, 0, 0, 0.1);
+  background: rgb(18, 18, 81);
 }
 
 .footer-bottom-content {
@@ -161,6 +161,7 @@
 }
 
 .legal-links {
+  margin-left: 5rem;
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -183,7 +184,7 @@
 }
 
 .copyright {
-  margin: 0;
+  margin-right: 5rem;
   font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.7);
 }

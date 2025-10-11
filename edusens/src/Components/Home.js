@@ -154,7 +154,7 @@ function Home() {
         
         <div className="hero-content centered">
           <div className="text-container">
-            <h1>Journey To Your <br /><span className="emphasized-word">Future Starts</span> Now</h1>
+            <h1>The Journey To Your<br /><span className="emphasized-word">FUTURE CAREER</span> Starts Now</h1>
           </div>
         </div>
       </section>
