@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 // import { AuthContext } from '../context/AuthContext';  // Commented out - auth disabled
+import ScrollLink from './ScrollLink';
 import './Navbar.css';
 import Logo from '../Assets/Logoo.png';
 
@@ -63,11 +64,19 @@ const Navbar = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   
-  // Close menu when clicking on a link
+  // Close menu when clicking on a link and scroll to top
   const handleLinkClick = () => {
     if (screenWidth <= 1023) {
       setIsMenuOpen(false);
     }
+    // Scroll to top of the page
+    setTimeout(() => {
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth'
+      });
+    }, 100);
   };
   
   // Close menu when clicking outside
@@ -127,27 +136,27 @@ const Navbar = () => {
             
             {/* Main navigation links */}
             <div className={`main-links ${isMenuOpen ? 'active' : ''}`}>
-              <Link 
+              <ScrollLink 
                 to="/" 
                 className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}
                 onClick={handleLinkClick}
               >
                 HOME
-              </Link>
-              <Link 
+              </ScrollLink>
+              <ScrollLink 
                 to="/Our-Services" 
                 className={`nav-link ${location.pathname === '/Our-Services' ? 'active' : ''}`}
                 onClick={handleLinkClick}
               >
                 OUR SERVICES
-              </Link>
-              <Link 
+              </ScrollLink>
+              <ScrollLink 
                 to="/contact-us" 
                 className={`nav-link ${location.pathname === '/contact-us' ? 'active' : ''}`}
                 onClick={handleLinkClick}
               >
                 CONTACT
-              </Link>
+              </ScrollLink>
               
               {/* Auth section inside mobile menu for small screens - COMMENTED OUT */}
               {/* {screenWidth <= 767 && (

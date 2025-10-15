@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import ScrollLink from './ScrollLink';
 import './Footer.css';
 import EdusensLogo from '../Assets/Eddd1.png';
 
@@ -27,12 +27,12 @@ const Footer = () => {
           <div className="footer-section links-section">
             <h3 className="section-title">Quick Links</h3>
             <nav className="footer-nav">
-              <Link to="/" className="footer-link">Home</Link>
-              <Link to="/Our-Services" className="footer-link">Our Services</Link>
-              <Link to="/Ai-Careers" className="footer-link">AI Careers</Link>
-              <Link to="/Edusens-Careers" className="footer-link">Career Explorer</Link>
-              <Link to="/job-shadowing" className="footer-link">Job Shadowing</Link>
-              <Link to="/contact-us" className="footer-link">Contact Us</Link>
+              <ScrollLink to="/" className="footer-link">Home</ScrollLink>
+              <ScrollLink to="/Our-Services" className="footer-link">Our Services</ScrollLink>
+              <ScrollLink to="/Ai-Careers" className="footer-link">AI Careers</ScrollLink>
+              <ScrollLink to="/Edusens-Careers" className="footer-link">Career Explorer</ScrollLink>
+              <ScrollLink to="/job-shadowing" className="footer-link">Job Shadowing</ScrollLink>
+              <ScrollLink to="/contact-us" className="footer-link">Contact Us</ScrollLink>
             </nav>
           </div>
 
@@ -40,7 +40,7 @@ const Footer = () => {
           <div className="footer-section social-section">
             <h3 className="section-title">Connect With Us</h3>
             <div className="social-icons">
-              <a href="https://www.facebook.com/edusensafrica" 
+              <a href="https://www.facebook.com/share/1GVbsYoM5b/" 
                  aria-label="Facebook" target="_blank" rel="noopener noreferrer" className="social-icon">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
@@ -72,9 +72,9 @@ const Footer = () => {
         <div className="footer-bottom">
           <div className="footer-bottom-content">
             <div className="legal-links">
-              <Link to="/terms-and-conditions" className="legal-link">Terms & Conditions</Link>
+              <ScrollLink to="/terms-and-conditions" className="legal-link">Terms & Conditions</ScrollLink>
               <span className="link-divider">•</span>
-              <Link to="/privacy-policy" className="legal-link">Privacy Policy</Link>
+              <ScrollLink to="/privacy-policy" className="legal-link">Privacy Policy</ScrollLink>
             </div>
             <p className="copyright">© 2025 EduSens Africa. All rights reserved.</p>
           </div>

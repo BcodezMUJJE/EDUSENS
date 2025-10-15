@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { FaBullseye, FaUserGraduate, FaRobot } from 'react-icons/fa';
 import './OurServices.css';
 import './CourseComingSoon.css';
 import Ai from '../Assets/Ai.jpeg';
@@ -111,24 +112,25 @@ const EduSensServices = () => {
         <h2 className="features-title">What Makes Us Different</h2>
         <div className="features-grid">
           <div className="feature-card">
-            <div className="feature-icon">🎯</div>
-            <h3>AI Career Matching</h3>
-            <p>Smart algorithms analyze your skills and interests to match you with perfect career paths</p>
+            <div className="feature-icon">
+              <FaBullseye style={{ color: '#1a2a6c', fontSize: '3rem' }} />
+            </div>
+            <h3>Economic Advantage</h3>
+            <p>Early stage career alignment focus preventing costly wrong choices</p>
           </div>
           <div className="feature-card">
-            <div className="feature-icon">👨‍🏫</div>
+            <div className="feature-icon">
+              <FaUserGraduate style={{ color: '#1a2a6c', fontSize: '3rem' }} />
+            </div>
             <h3>Expert Mentorship</h3>
-            <p>Connect with industry leaders and experienced career coaches for personalized guidance</p>
+            <p>Real-world job shadowing and mentorship with experienced professionals.</p>
           </div>
           <div className="feature-card">
-            <div className="feature-icon">📈</div>
-            <h3>Growth Tracking</h3>
-            <p>Monitor your progress with detailed analytics and milestone achievements</p>
-          </div>
-          <div className="feature-card">
-            <div className="feature-icon">🏆</div>
-            <h3>Certifications</h3>
-            <p>Earn industry-recognized certificates to boost your professional profile</p>
+            <div className="feature-icon">
+              <FaRobot style={{ color: '#1a2a6c', fontSize: '3rem' }} />
+            </div>
+            <h3>Smart Career Matching</h3>
+            <p>AI algorithms analyze your skills and interests to match you with fitting career paths.</p>
           </div>
         </div>
       </section>

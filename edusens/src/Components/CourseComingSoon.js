@@ -49,9 +49,7 @@ const CourseComingSoon = () => {
           <h1 className="hero-title">Revolutionary Career Guidance Platform</h1>
           
           <p className="hero-subtitle">
-            Transform your career journey with AI-powered guidance, expert mentorship, 
-            and personalized learning paths designed for the modern professional. 
-            Join thousands of professionals who are already preparing for their next career breakthrough.
+            Embark on a 3 weeks journey of discovering your future career and aligning yourself to succeed in the profession.
           </p>
         </div>
 

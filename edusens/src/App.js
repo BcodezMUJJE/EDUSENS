@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 // import { AuthProvider } from './context/AuthContext';  // Commented out - auth disabled
+import ScrollToTop from './Components/ScrollToTop';
 import Navbar from './Components/Navbar';
 import Footer from './Components/Footer';
 import Home from './Components/Home';
@@ -22,6 +23,7 @@ import PrivacyPolicy from './Pages/PrivacyPolicy';
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       {/* <AuthProvider> */} {/* Auth functionality completely disabled */}
       <div className="app-container">
         <Navbar />

@@ -331,6 +331,10 @@ body {
     text-align: center;
   }
 
+  .service-info.reversed {
+    flex-direction: column;
+  }
+
   .info-image img {
     margin-top: 20px;
   }
@@ -369,6 +373,10 @@ body {
   .service-info {
     flex-direction: column;
     text-align: center;
+  }
+
+  .service-info.reversed {
+    flex-direction: column;
   }
 
   .info-image img {
